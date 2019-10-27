@@ -81,24 +81,18 @@ export default {
   // umi routes: https://umijs.org/zh/guide/router.html
   routes: [
     {
-      path: '/user',
-      component: '../layouts/UserLayout',
-      routes: [
-        {
-          name: 'login',
-          path: '/user/login',
-          component: './user/login',
-        },
-      ],
+      path: '/login',
+      component: './Login',
     },
     {
       path: '/',
       component: '../layouts/SecurityLayout',
+      authority: ['*'],
       routes: [
         {
           path: '/',
           component: '../layouts/BasicLayout',
-          authority: ['admin', 'user'],
+          authority: ['*'],
           routes: [
             {
               path: '/',
@@ -117,6 +111,72 @@ export default {
               component: './Admin',
               authority: ['admin'],
             },
+            // temp page
+            {
+              path: '/earn-view',
+              name: 'earn-view',
+              icon: 'home',
+              routes: [
+                {
+                  path: '/earn-view',
+                  redirect: '/earn-view/hotel/index',
+                },
+                {
+                  path: '/earn-view/hotel',
+                  name: 'hotel',
+                  hideChildrenInMenu: true,
+                  routes: [
+                    {
+                      path: '/earn-view/hotel',
+                      redirect: '/earn-view/hotel/index',
+                    },
+                    {
+                      path: '/earn-view/hotel/index',
+                      name: 'index',
+                      component: './Earn/Hotel',
+                    },
+                  ],
+                },
+                {
+                  path: '/earn-view/order',
+                  name: 'order',
+                  hideChildrenInMenu: true,
+                  routes: [
+                    {
+                      path: '/earn-view/order',
+                      redirect: '/earn-view/order/index',
+                    },
+                    {
+                      path: '/earn-view/order/booking',
+                      name: 'booking',
+                      component: './Earn/Order/Booking',
+                    },
+                    {
+                      path: '/earn-view/order/index',
+                      name: 'index',
+                      component: './Earn/Order/Index',
+                    },
+                  ],
+                },
+                {
+                  path: '/earn-view/task',
+                  name: 'task',
+                  hideChildrenInMenu: true,
+                  routes: [
+                    {
+                      path: '/earn-view/task',
+                      redirect: '/earn-view/task/index',
+                    },
+                    {
+                      path: '/earn-view/task/index',
+                      name: 'index',
+                      component: './Earn/Task/Index',
+                    },
+                  ],
+                },
+              ],
+            },
+            // 404
             {
               component: './404',
             },
@@ -135,6 +195,7 @@ export default {
   // Theme for antd: https://ant.design/docs/react/customize-theme-cn
   theme: {
     'primary-color': primaryColor,
+    'font-size-base': '12px',
   },
   define: {
     ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION:
@@ -189,4 +250,20 @@ export default {
     },
   },
   */
+  proxy: {
+    '/main/': {
+      target: 'http://this.server.com',
+      changeOrigin: true,
+    },
+    // earn proxy item
+    '/earn/': {
+      target: 'http://this.server.com',
+      changeOrigin: true,
+    },
+    // global proxy item
+    '/storage/': {
+      target: 'http://this.server.com',
+      changeOrigin: true,
+    },
+  },
 } as IConfig;
