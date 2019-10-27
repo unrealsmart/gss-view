@@ -3,7 +3,8 @@
  * 更详细的 api 文档: https://github.com/umijs/umi-request
  */
 import { extend } from 'umi-request';
-import { notification } from 'antd';
+import { message, notification } from 'antd';
+import isJSON from 'is-json';
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -30,11 +31,14 @@ const errorHandler = (error: { response: Response }): Response => {
   const { response } = error;
   if (response && response.status) {
     const errorText = codeMessage[response.status] || response.statusText;
-    const { status, url } = response;
+    const { status } = response;
+    const url = new URL(response.url);
 
-    notification.error({
-      message: `请求错误 ${status}: ${url}`,
-      description: errorText,
+    response.text().then(data => {
+      const object = isJSON(data) ? JSON.parse(data) : {};
+      if (url.pathname !== '/main/ping') {
+        message.error(`${status} ${object.message || errorText}`);
+      }
     });
   } else if (!response) {
     notification.error({
@@ -51,6 +55,50 @@ const errorHandler = (error: { response: Response }): Response => {
 const request = extend({
   errorHandler, // 默认错误处理
   credentials: 'include', // 默认请求是否带上cookie
+});
+
+/**
+ * 配置request拦截器
+ */
+request.interceptors.request.use((url, options) => {
+  const token = localStorage.getItem('antd-pro-token');
+  const newHeaders = token
+    ? {
+        ...options.headers,
+        Authorization: `Bearer ${token}`,
+      }
+    : options.headers;
+
+  return {
+    url,
+    options: {
+      ...options,
+      headers: newHeaders,
+    },
+  };
+});
+
+/**
+ * 配置response拦截器
+ */
+request.interceptors.response.use(response => {
+  response
+    .clone()
+    .text()
+    .then(data => {
+      const object: JsonWebTokenType = isJSON(data) ? JSON.parse(data) : {};
+      if (object.ADP_LOGOUT || object.ADP_TOKEN_REFRESH) {
+        if (object.ADP_TOKEN_REFRESH) {
+          message.warn(object.message);
+        }
+        // eslint-disable-next-line no-underscore-dangle
+        window.g_app._store.dispatch({
+          type: 'login/logout',
+        });
+      }
+    });
+
+  return response;
 });
 
 export default request;
