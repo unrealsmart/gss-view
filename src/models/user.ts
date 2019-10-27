@@ -64,13 +64,16 @@ const UserModel: UserModelType = {
         // console.log(response);
       }
 
+      const avatar = user.avatar
+        ? user.avatar.path
+        : 'http://pic4.zhimg.com/v2-2bec6443e2ac527d19e2aaf8660fd863_b.jpg';
+
       yield put({
         type: 'saveCurrentUser',
         payload: {
           ...user,
           name: user.nickname || '未设置昵称',
-          avatar:
-            user.avatar.path || 'http://pic4.zhimg.com/v2-2bec6443e2ac527d19e2aaf8660fd863_b.jpg',
+          avatar,
         },
       });
     },
