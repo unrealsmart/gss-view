@@ -48,4 +48,14 @@ export default {
   'menu.editor.flow': '流程编辑器',
   'menu.editor.mind': '脑图编辑器',
   'menu.editor.koni': '拓扑编辑器',
+  // earn
+  'menu.earn-view': 'Earn',
+  'menu.earn-view.hotel': '酒店',
+  'menu.earn-view.hotel.index': '酒店列表',
+  'menu.earn-view.order': '订单',
+  'menu.earn-view.order.index': '订单列表',
+  'menu.earn-view.order.booking': '预定',
+  'menu.earn-view.task': '任务',
+  'menu.earn-view.task.index': '任务列表',
+  // more
 };
