@@ -45,3 +45,128 @@ ol {
     }
   }
 }
+
+:global {
+  // set user select none
+  header.ant-layout-header,
+  aside.ant-pro-sider-menu-sider {
+    user-select: none;
+  }
+
+  // sider
+  aside.ant-pro-sider-menu-sider.light {
+    border-right: 1px solid #eee;
+    box-shadow: none;
+
+    .ant-pro-sider-menu-logo {
+      padding: 0;
+      border-bottom: 1px solid #eee;
+      box-shadow: none;
+      a {
+        display: flex;
+        flex-flow: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        img {
+          max-width: 100%;
+          height: auto;
+          max-height: 75%;
+          user-select: none;
+        }
+        h1 {
+          display: none;
+        }
+      }
+    }
+
+    .ant-menu-light {
+      border-right: none;
+
+      .ant-menu-item {
+        width: 100%;
+        &::after {
+          border-right: none;
+        }
+      }
+    }
+  }
+
+  // header
+  header.ant-layout-header {
+    border-bottom: 1px solid #eee;
+
+    .ant-pro-global-header {
+      border-bottom: 1px solid #eee;
+      box-shadow: none;
+
+      .ant-pro-global-header-trigger {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        .anticon {
+          font-size: 15px;
+        }
+      }
+
+      .antd-pro-components-header-search-index-headerSearch .anticon-search {
+        font-size: 12px;
+      }
+    }
+  }
+
+  // modify ant clear icon
+  .ant-input-clear-icon {
+    color: rgba(0, 0, 0, 0.25);
+  }
+
+  // modify ant input suffix margin
+  .ant-input-affix-wrapper .ant-input-suffix .anticon {
+    &:first-child {
+      margin-right: 0 !important;
+    }
+    &:last-child {
+      margin-right: 18px;
+    }
+  }
+  .ant-input-search.ant-input-affix-wrapper.ant-input-affix-wrapper-with-clear-btn {
+    .ant-input-suffix .anticon {
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+
+  // fix menu light submenu popup background
+  .ant-menu-light.ant-menu-submenu-popup {
+    background: transparent;
+  }
+
+  // fix html tag a attr disabled
+  a.disabled {
+    color: rgba(0, 0, 0, 0.25);
+    cursor: not-allowed;
+  }
+
+  // custom google scrollbar style
+  ::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+  }
+  ::-webkit-scrollbar-track {
+    display: none;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #ccc;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #aaa;
+  }
+
+  // custom selection style
+  ::selection {
+    color: #fff;
+    background-color: #333;
+  }
+}
