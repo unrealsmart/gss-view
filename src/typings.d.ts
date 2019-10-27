@@ -19,6 +19,7 @@ declare module '@antv/data-set';
 declare module 'nzh/cn';
 declare module 'webpack-theme-color-replacer';
 declare module 'webpack-theme-color-replacer/client';
+declare module 'is-json';
 
 // google analytics interface
 interface GAFieldsObject {
@@ -34,6 +35,13 @@ interface Window {
     hitType: 'event' | 'pageview',
     fieldsObject: GAFieldsObject | string,
   ) => void;
+  g_app: {
+    _store: {
+      dispatch?: any;
+      [key: string]: any;
+    };
+    [key: string]: any;
+  };
 }
 
 declare let ga: Function;
@@ -41,3 +49,44 @@ declare let ga: Function;
 // preview.pro.ant.design only do not use in your production ;
 // preview.pro.ant.design 专用环境变量，请不要在你的项目中使用它。
 declare let ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION: 'site' | undefined;
+
+// global interface json web token type
+interface JsonWebTokenType {
+  ADP_LOGOUT?: boolean;
+  ADP_TOKEN_REFRESH?: boolean;
+  message?: string;
+  token?: string;
+}
+
+// global interface casbin auth model type
+interface AuthModelType {
+  sub?: string;
+  dom?: string;
+  obj?: string;
+  act?: string;
+  des?: string;
+}
+
+// global index class state
+interface GlobalIndexClassState {
+  // 用于指示加载状态
+  dataLoading?: boolean;
+  // more state any
+  [key: string]: any;
+}
+
+// global form class state
+interface GlobalFormClassState {
+  // 表单加载状态
+  formLoading?: boolean;
+  // 表单项禁用
+  formItemDisable?: boolean;
+  // 提交按钮状态
+  submitLoading?: boolean;
+  // 提交按钮禁用
+  submitDisable?: boolean;
+  // 返回按钮禁用
+  returnDisable?: boolean;
+  // more state any
+  [key: string]: any;
+}
