@@ -21,7 +21,7 @@ import Authorized from '@/utils/Authorized';
 import RightContent from '@/components/GlobalHeader/RightContent';
 import { ConnectState } from '@/models/connect';
 import { isAntDesignPro, getAuthorityFromRouter } from '@/utils/utils';
-import logo from '../assets/logo.svg';
+import logo from '../assets/logo.jpg';
 
 const noMatch = (
   <Result
@@ -30,7 +30,7 @@ const noMatch = (
     subTitle="Sorry, you are not authorized to access this page."
     extra={
       <Button type="primary">
-        <Link to="/user/login">Go Login</Link>
+        <Link to="/login">Go Login</Link>
       </Button>
     }
   />
@@ -179,6 +179,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
       menuDataRender={menuDataRender}
       formatMessage={formatMessage}
       rightContentRender={rightProps => <RightContent {...rightProps} />}
+      siderWidth={200}
       {...props}
       {...settings}
     >
