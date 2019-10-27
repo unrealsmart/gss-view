@@ -5,6 +5,8 @@ import { GlobalModelState } from './global';
 import { DefaultSettings as SettingModelState } from '../../config/defaultSettings';
 import { UserModelState } from './user';
 import { LoginModelType } from './login';
+import { EarnHotelModelState } from '@/models/earn/hotel';
+import { EarnTaskModelState } from '@/models/earn/task';
 
 export { GlobalModelState, SettingModelState, UserModelState };
 
@@ -26,6 +28,8 @@ export interface ConnectState {
   settings: SettingModelState;
   user: UserModelState;
   login: LoginModelType;
+  earnHotel: EarnHotelModelState;
+  earnTask: EarnTaskModelState;
 }
 
 export interface Route extends MenuDataItem {

@@ -1,7 +1,8 @@
 import { Effect } from 'dva';
 import { Reducer } from 'redux';
+import isJSON from 'is-json';
 
-import { queryCurrent, query as queryUsers } from '@/services/user';
+import { query as queryUsers } from '@/services/user';
 
 export interface CurrentUser {
   avatar?: string;
@@ -13,7 +14,11 @@ export interface CurrentUser {
     key: string;
     label: string;
   }[];
-  userid?: string;
+  id?: string;
+  username?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
   unreadCount?: number;
 }
 
@@ -49,11 +54,24 @@ const UserModel: UserModelType = {
         payload: response,
       });
     },
-    *fetchCurrent(_, { call, put }) {
-      const response = yield call(queryCurrent);
+    *fetchCurrent(_, { put }) {
+      // TODO 1. 获取用户信息
+      // TODO 2. 判断过期刷新
+      const adpUser = localStorage.getItem('antd-pro-user') || '';
+      const user = isJSON(adpUser) ? JSON.parse(adpUser) : {};
+      if (!user || user === {}) {
+        // const response = yield call(queryCurrent);
+        // console.log(response);
+      }
+
       yield put({
         type: 'saveCurrentUser',
-        payload: response,
+        payload: {
+          ...user,
+          name: user.nickname || '未设置昵称',
+          avatar:
+            user.avatar.path || 'http://pic4.zhimg.com/v2-2bec6443e2ac527d19e2aaf8660fd863_b.jpg',
+        },
       });
     },
   },

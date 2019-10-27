@@ -3,9 +3,10 @@ import { routerRedux } from 'dva/router';
 import { Effect } from 'dva';
 import { stringify } from 'querystring';
 
-import { fakeAccountLogin, getFakeCaptcha } from '@/services/login';
+import { administratorVerification, getFakeCaptcha } from '@/services/login';
 import { setAuthority } from '@/utils/authority';
 import { getPageQuery } from '@/utils/utils';
+import { reloadAuthorized } from '@/utils/Authorized';
 
 export interface StateType {
   status?: 'ok' | 'error';
@@ -35,13 +36,28 @@ const Model: LoginModelType = {
 
   effects: {
     *login({ payload }, { call, put }) {
-      const response = yield call(fakeAccountLogin, payload);
+      const response = yield call(administratorVerification, payload);
+      const { token, currentAuthority, ...userData } = response;
+
+      if (!userData.status) {
+        return;
+      }
+
+      localStorage.setItem('antd-pro-user', JSON.stringify(userData));
+      localStorage.setItem('antd-pro-token', token);
+      setAuthority(currentAuthority);
+
       yield put({
         type: 'changeLoginStatus',
         payload: response,
       });
+      yield put({
+        type: 'user/saveCurrentUser',
+        payload: userData,
+      });
+
       // Login successfully
-      if (response.status === 'ok') {
+      if (response.status) {
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
         let { redirect } = params as { redirect: string };
@@ -67,10 +83,14 @@ const Model: LoginModelType = {
     *logout(_, { put }) {
       const { redirect } = getPageQuery();
       // redirect
-      if (window.location.pathname !== '/user/login' && !redirect) {
+      if (window.location.pathname !== '/login' && !redirect) {
+        localStorage.removeItem('antd-pro-user');
+        localStorage.removeItem('antd-pro-token');
+        setAuthority('');
+        reloadAuthorized();
         yield put(
           routerRedux.replace({
-            pathname: '/user/login',
+            pathname: '/login',
             search: stringify({
               redirect: window.location.href,
             }),
