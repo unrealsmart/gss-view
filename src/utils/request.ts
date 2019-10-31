@@ -36,6 +36,7 @@ const errorHandler = (error: { response: Response }): Response => {
 
     response.text().then(data => {
       const object = isJSON(data) ? JSON.parse(data) : {};
+      console.log(url);
       if (url.pathname !== '/main/ping') {
         message.error(`${status} ${object.message || errorText}`);
       }
