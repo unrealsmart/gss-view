@@ -16,14 +16,16 @@ interface TaskIndexProps {
 
 interface TaskIndexState extends GlobalIndexClassState {
   modalVisible: boolean;
-  taskPercent: number | 0;
+  crawlTaskInterval: NodeJS.Timer | undefined;
+  locking: number | string | undefined;
 }
 
 class TaskIndex extends Component<TaskIndexProps, TaskIndexState> {
   state = {
     dataLoading: true,
     modalVisible: false,
-    taskPercent: 0,
+    crawlTaskInterval: undefined,
+    locking: undefined,
   };
 
   componentDidMount(): void {
@@ -32,6 +34,18 @@ class TaskIndex extends Component<TaskIndexProps, TaskIndexState> {
       dispatch({
         type: 'earnTask/reader',
       }).then(() => {
+        const { earnTask } = this.props;
+        if (earnTask.list) {
+          earnTask.list.map((item: EarnTaskModelItem) => {
+            if (item.task.thread_status) {
+              this.taskControl(item);
+              this.setState({
+                locking: item.id,
+              });
+            }
+            return item;
+          });
+        }
         if (this.state.dataLoading) {
           this.setState({
             dataLoading: false,
@@ -39,6 +53,11 @@ class TaskIndex extends Component<TaskIndexProps, TaskIndexState> {
         }
       });
     }
+  }
+
+  componentWillUnmount(): void {
+    const { crawlTaskInterval } = this.state;
+    clearInterval(crawlTaskInterval);
   }
 
   showModal = (): void => {
@@ -54,14 +73,33 @@ class TaskIndex extends Component<TaskIndexProps, TaskIndexState> {
   };
 
   taskControl = (item: EarnTaskModelItem): void => {
-    console.log(item);
+    const { dispatch } = this.props;
+
+    const requests = () => {
+      if (dispatch) {
+        dispatch({
+          type: 'earnTask/runCrawlTask',
+          payload: {
+            id: item.id,
+          },
+        });
+      }
+    };
+
+    requests();
+
+    const interval = setInterval(() => {
+      requests();
+    }, 10 * 1000);
+    this.setState({
+      crawlTaskInterval: interval,
+      locking: item.id,
+    });
   };
 
   render(): React.ReactNode {
-    const { dataLoading, modalVisible, taskPercent } = this.state;
+    const { dataLoading, modalVisible, locking } = this.state;
     const { earnTask } = this.props;
-
-    const Play = <Icon type="" style={{ fontSize: 24, color: '#999' }} />;
 
     return (
       <PageHeaderWrapper>
@@ -77,54 +115,85 @@ class TaskIndex extends Component<TaskIndexProps, TaskIndexState> {
             {earnTask.list
               ? earnTask.list.map((item: EarnTaskModelItem) => (
                   <Col span={8} key={item.id.toString()}>
-                    <Card bordered={false} style={{ marginBottom: 24, height: 230 }}>
-                      <div
-                        style={{
-                          fontSize: 15,
-                          fontWeight: 'bold',
-                          marginBottom: 12,
-                          textAlign: 'center',
-                        }}
-                      >
-                        {item.country_name} {item.city_name}
-                      </div>
-                      <Row gutter={12} type="flex" justify="center" style={{ marginBottom: 12 }}>
-                        <Col span={10} style={{ textAlign: 'center' }}>
-                          <div style={{ letterSpacing: 1.5, marginBottom: 6 }}>入住</div>
-                          <div style={{ fontSize: 15 }}>{item.check_in_date}</div>
-                        </Col>
-                        <Col
-                          span={4}
+                    <Spin
+                      indicator={<Icon type="stop" style={{ color: '#f00' }} />}
+                      spinning={(locking && item.id !== locking) || false}
+                    >
+                      <Card bordered={false} style={{ marginBottom: 24, height: 260 }}>
+                        <div
                           style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
+                            fontSize: 15,
+                            fontWeight: 'bold',
+                            marginBottom: 12,
+                            textAlign: 'center',
                           }}
                         >
-                          <Icon type="line" />
-                        </Col>
-                        <Col span={10} style={{ textAlign: 'center' }}>
-                          <div style={{ letterSpacing: 1.5, marginBottom: 6 }}>离店</div>
-                          <div style={{ fontSize: 15 }}>{item.check_out_date}</div>
-                        </Col>
-                      </Row>
-                      <Row type="flex" justify="center">
-                        <Col className={styles.progress} onClick={() => this.taskControl(item)}>
-                          <Progress
-                            type="circle"
-                            strokeColor={{ '0%': '#ccc', '100%': '#87d068' }}
-                            percent={taskPercent}
-                            width={90}
-                            strokeLinecap="square"
-                            format={percent => (
-                              <div style={{ fontSize: 12 }}>
-                                {Play} {percent}
-                              </div>
-                            )}
-                          />
-                        </Col>
-                      </Row>
-                    </Card>
+                          {item.country_name} {item.city_name}
+                        </div>
+                        <Row gutter={12} type="flex" justify="center" style={{ marginBottom: 12 }}>
+                          <Col span={10} style={{ textAlign: 'center' }}>
+                            <div style={{ letterSpacing: 1.5, marginBottom: 6 }}>入住</div>
+                            <div style={{ fontSize: 15 }}>{item.check_in_date}</div>
+                          </Col>
+                          <Col
+                            span={4}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                            }}
+                          >
+                            <Icon type="line" />
+                          </Col>
+                          <Col span={10} style={{ textAlign: 'center' }}>
+                            <div style={{ letterSpacing: 1.5, marginBottom: 6 }}>离店</div>
+                            <div style={{ fontSize: 15 }}>{item.check_out_date}</div>
+                          </Col>
+                        </Row>
+                        <Row type="flex" justify="center">
+                          <Col className={styles.progress} onClick={() => this.taskControl(item)}>
+                            <Progress
+                              type="circle"
+                              strokeColor={{ '0%': '#ccc', '100%': '#87d068' }}
+                              percent={
+                                Number((item.task.current / item.task.count).toFixed(2)) * 100
+                              }
+                              width={90}
+                              strokeLinecap="square"
+                              format={percent => (
+                                <div style={{ fontSize: 12 }}>
+                                  {item.task.thread_status ? (
+                                    <div>
+                                      <div style={{ marginBottom: 4, fontSize: 15 }}>
+                                        {percent}%
+                                      </div>
+                                      <div>
+                                        {item.task.current} / {item.task.count}
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <Icon
+                                      type="caret-right"
+                                      style={{ fontSize: 18, color: '#999' }}
+                                    />
+                                  )}
+                                </div>
+                              )}
+                            />
+                          </Col>
+                        </Row>
+                        <Row
+                          type="flex"
+                          justify="center"
+                          align="middle"
+                          style={{ marginBottom: 12 }}
+                        >
+                          <Col>
+                            <div>{item.task.current_hotel}</div>
+                          </Col>
+                        </Row>
+                      </Card>
+                    </Spin>
                   </Col>
                 ))
               : undefined}
