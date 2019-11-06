@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
-import { Card, Divider, Icon, Rate, Table } from 'antd';
+import { Card, Divider, Icon, Rate, Slider, Table } from 'antd';
 import { connect } from 'dva';
 import { Link } from 'umi';
 import { EarnHotelModelItem } from '@/models/earn/hotel';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { ConnectState } from '@/models/connect';
+import rs from '@/utils/rs';
+import { SliderValue } from 'antd/es/slider';
 
 interface HotelIndexProps {
   [key: string]: any;
@@ -20,38 +22,11 @@ class HotelIndex extends Component<HotelIndexProps, HotelIndexState> {
   };
 
   componentDidMount(): void {
-    const { dispatch } = this.props;
-    if (dispatch) {
-      dispatch({
-        type: 'earnHotel/reader',
-      }).then(() => {
-        if (this.state.dataLoading) {
-          this.setState({
-            dataLoading: false,
-          });
-        }
-      });
-    }
+    rs.reader(this, 'earnHotel/reader');
   }
 
-  tablePageChange = (page: number, pageSize: number) => {
-    const { dispatch } = this.props;
-    if (dispatch) {
-      this.setState({
-        dataLoading: true,
-      });
-      dispatch({
-        type: 'earnHotel/reader',
-        payload: {
-          page,
-          page_size: pageSize,
-        },
-      }).then(() => {
-        this.setState({
-          dataLoading: false,
-        });
-      });
-    }
+  updatePriceAdvantage = (value: SliderValue) => {
+    console.log(value);
   };
 
   render(): React.ReactNode {
@@ -127,6 +102,35 @@ class HotelIndex extends Component<HotelIndexProps, HotelIndexState> {
         key: 'city_id',
       },
       {
+        title: '价格优势',
+        dataIndex: 'price_advantage',
+        width: 160,
+        key: 'price_advantage',
+        render: (_: void, record: EarnHotelModelItem) => {
+          const marks = {
+            0: '无',
+            1: '微弱',
+            2: '中等',
+            3: '大',
+          };
+          return (
+            <Slider
+              marks={marks}
+              dots
+              defaultValue={0}
+              min={0}
+              max={3}
+              onChange={(value: SliderValue) => {
+                rs.update(this, 'earnHotel/update', {
+                  id: record.id,
+                  advantage: value,
+                });
+              }}
+            />
+          )
+        },
+      },
+      {
         title: '操作',
         dataIndex: 'action',
         width: 100,
@@ -166,8 +170,18 @@ class HotelIndex extends Component<HotelIndexProps, HotelIndexState> {
             pagination={{
               ...earnHotel.page,
               showSizeChanger: true,
-              onChange: this.tablePageChange,
-              onShowSizeChange: this.tablePageChange,
+              onChange: (page, pageSize) => {
+                rs.reader(this, 'earnHotel/reader', {
+                  page,
+                  page_size: pageSize,
+                });
+              },
+              onShowSizeChange: (current, size) => {
+                rs.reader(this, 'earnHotel/reader', {
+                  page: current,
+                  page_size: size,
+                });
+              },
             }}
             columns={columns}
           />

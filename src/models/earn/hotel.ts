@@ -1,7 +1,7 @@
 import { Effect } from 'dva';
 import { Reducer } from 'redux';
-import { reader, search } from '@/services/common';
-import taker from '@/utils/taker';
+import { reader, search, update } from '@/services/common';
+import { TE, TR } from '@/utils/taker';
 
 export interface EarnHotelModelItem {
   id: number;
@@ -28,6 +28,7 @@ export interface EarnHotelModelType {
   state: EarnHotelModelState;
   effects: {
     reader: Effect;
+    update: Effect;
     search: Effect;
   };
   reducers: {
@@ -46,25 +47,33 @@ const EarnHotelModel: EarnHotelModelType = {
 
   effects: {
     *reader(action, effects) {
-      yield taker.reader('/earn/hotel', action, effects, reader, 'saveHotel');
+      yield TE.reader('/earn/hotel', action, effects, reader, 'saveHotel');
+    },
+    *update(action, effects) {
+      yield TE.update('/earn/hotel', action, effects, update, 'saveHotel');
     },
     *search(action, effects) {
-      yield taker.search('earn/hotel', action, effects, search, 'saveHotel');
+      yield TE.search('earn/hotel', action, effects, search, 'saveHotel');
     },
   },
 
   reducers: {
     saveHotel(state, action) {
-      const {
-        detail: info = {},
-        data: list = [],
-        current_page: current = 1,
-        per_page: pageSize = 20,
-        total,
-      } = action.payload;
-      const page = { current, pageSize, total };
-      return { ...state, page, list, info };
+      return TR.run(state, action);
     },
+    // saveHotel(state, action) {
+    //   console.log(state);
+    //   console.log(action);
+    //   const {
+    //     detail: info = {},
+    //     data: list = [],
+    //     current_page: current = 1,
+    //     per_page: pageSize = 20,
+    //     total,
+    //   } = action.payload;
+    //   const page = { current, pageSize, total };
+    //   return { ...state, page, list, info };
+    // },
   },
 };
 
