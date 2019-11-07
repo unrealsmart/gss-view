@@ -67,10 +67,23 @@ interface AuthModelType {
   des?: string;
 }
 
+// global interface model
+interface GlobalDefaultModelState {
+  page?: {
+    current?: number | 1;
+    size?: number | 20;
+    last?: number | 0;
+    total?: number | 0;
+  };
+  list?: [];
+  info?: object | [];
+}
+
 // global index class state
 interface GlobalIndexClassState {
   // 用于指示加载状态
   dataLoading?: boolean;
+  //
   // more state any
   [key: string]: any;
 }

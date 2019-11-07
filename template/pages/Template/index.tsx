@@ -13,7 +13,7 @@ class Index extends Component<IndexProps, IndexState> {
   state = {};
 
   componentDidMount(): void {
-    //
+    // 使用rs工具请求数据
   }
 
   render(): React.ReactNode | undefined {

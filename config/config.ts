@@ -138,6 +138,11 @@ export default {
                   ],
                 },
                 {
+                  path: '/earn-view/date-price',
+                  name: 'date-price',
+                  component: './Earn/datePrice',
+                },
+                {
                   path: '/earn-view/order',
                   name: 'order',
                   hideChildrenInMenu: true,
