@@ -1,6 +1,6 @@
 import { Effect } from 'dva';
 import { Reducer } from 'redux';
-import { reader, search } from '@/services/common';
+import { search } from '@/services/common';
 import { TE } from '@/utils/taker';
 import { runCrawlTask } from '@/services/task';
 
@@ -44,7 +44,6 @@ export interface EarnTaskModelType {
   namespace: 'earnTask';
   state: EarnTaskModelState;
   effects: {
-    reader: Effect;
     search: Effect;
     runCrawlTask: Effect;
   };
@@ -64,9 +63,6 @@ const EarnTaskModel: EarnTaskModelType = {
   },
 
   effects: {
-    *reader(action, effects) {
-      yield TE.reader('/earn/task', action, effects, reader, 'saveEarnTask');
-    },
     *search(action, effects) {
       yield TE.search('/earn/task', action, effects, search, 'saveEarnTask');
     },

@@ -1,7 +1,7 @@
 import { EffectsCommandMap } from 'dva';
 import { AnyAction } from 'redux';
 
-type Effect = (
+type TakerEffect = (
   url: string,
   action: AnyAction,
   effects: EffectsCommandMap,
@@ -10,41 +10,43 @@ type Effect = (
 ) => void;
 
 export interface TakeMapping {
-  reader: Effect,
-  update: Effect,
-  search: Effect,
-  create: Effect,
+  update: TakerEffect;
+  search: TakerEffect;
+  create: TakerEffect;
 }
 
 export const TE: TakeMapping = {
-  *reader(url, { payload }, { call, put }, model, name) {
+  *search(url, { payload }, { call, put }, model) {
     const response = yield call(model, url, payload || { page: 1, page_size: 10 });
     yield put({
-      type: name,
-      payload: response,
-      mode: 'reader',
-    });
-  },
-  *update(url, { payload }, { call, put }, model, name) {
-    const response = yield call(model, url, payload);
-    yield put({
-      type: name,
-      payload: response,
-      mode: 'update',
-    });
-  },
-  *search(url, { payload }, { call, put }, model, name) {
-    const response = yield call(model, url, payload);
-    yield put({
-      type: name,
+      type: 'run',
       payload: response,
       mode: 'search',
     });
   },
-  *create(url, { payload }, { call, put }, model, name) {
+  *update(url, { payload }, { call, put }, model) {
+    yield put({
+      type: 'run',
+      payload: {
+        ...payload,
+        request_status: true,
+      },
+      mode: 'update',
+    });
     const response = yield call(model, url, payload);
     yield put({
-      type: name,
+      type: 'run',
+      payload: {
+        ...response,
+        request_status: false,
+      },
+      mode: 'update',
+    });
+  },
+  *create(url, { payload }, { call, put }, model) {
+    const response = yield call(model, url, payload);
+    yield put({
+      type: 'run',
       payload: response,
       mode: 'create',
     });
@@ -53,9 +55,9 @@ export const TE: TakeMapping = {
 
 export const TR = {
   run(state: any, action: any) {
-    return this[action.mode](state, action);
+    return TR[action.mode](state, action);
   },
-  reader(state: any, action: any) {
+  search(state: any, action: any) {
     const {
       detail: info = {},
       data: list = [],
@@ -64,20 +66,25 @@ export const TR = {
       total = 0,
     } = action.payload;
     const page = { current, pageSize, total };
-
     return { ...state, page, list, info };
   },
   update(state: any, action: any) {
-    console.log(state);
-    console.log(action);
-
-    return {};
-  },
-  search(state: any, action: any) {
-    console.log(state);
-    console.log(action);
-
-    return {};
+    if (state.list) {
+      const newList = state.list.map((item: any) => {
+        if (Number(item.id) === Number(action.payload.id)) {
+          return {
+            ...item,
+            ...action.payload,
+          };
+        }
+        return item;
+      });
+      return {
+        ...state,
+        list: newList,
+      };
+    }
+    return state;
   },
   create(state: any, action: any) {
     console.log(state);

@@ -1,0 +1,60 @@
+.noBorder {
+  :global(.ant-table.ant-table-small) {
+    border: none;
+  }
+}
+
+.paginationCenter {
+  :global(.ant-pagination.ant-table-pagination) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+}
+
+.dateFullCell {
+  height: 36px;
+  padding: 6px;
+  text-align: center;
+  transition: all 0.15s ease-in-out;
+  &:hover,
+  &:focus,
+  &:active {
+    background-color: #e6f7ff;
+  }
+}
+
+.overlay {
+  :global(.ant-popover-inner-content) {
+    padding: 0;
+  }
+}
+
+.overlayContent {
+  width: 520px;
+  height: 280px;
+  overflow: hidden;
+  :global(.ant-tabs .ant-tabs-left-bar .ant-tabs-tab) {
+    margin-bottom: 0;
+    padding: 6px 12px;
+    font-weight: normal;
+  }
+  :global(.ant-tabs .ant-tabs-left-content) {
+    padding-left: 0;
+  }
+}
+
+.policyItem {
+  margin: 2px;
+  padding: 4px 16px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  transition: all 0.15s;
+  &:hover,
+  &:active,
+  &:focus {
+    background-color: #fadb14;
+    border-color: #fadb14;
+  }
+}

@@ -3,10 +3,9 @@ import defaultSettings from './defaultSettings'; // https://umijs.org/config/
 
 import slash from 'slash2';
 import webpackPlugin from './plugin.config';
-const { pwa, primaryColor } = defaultSettings;
-
-// preview.pro.ant.design only do not use in your production ;
+const { pwa, primaryColor } = defaultSettings; // preview.pro.ant.design only do not use in your production ;
 // preview.pro.ant.design 专用环境变量，请不要在你的项目中使用它。
+
 const { ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION } = process.env;
 const isAntDesignProPreview = ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION === 'site';
 const plugins: IPlugin[] = [
@@ -44,6 +43,8 @@ const plugins: IPlugin[] = [
       //   include: ['dva', 'dva/router', 'dva/saga', 'dva/fetch'],
       //   exclude: ['@babel/runtime', 'netlify-lambda'],
       // },
+      hd: false,
+      dll: true,
     },
   ],
   [
@@ -110,8 +111,7 @@ export default {
               icon: 'crown',
               component: './Admin',
               authority: ['admin'],
-            },
-            // temp page
+            }, // temp page
             {
               path: '/earn-view',
               name: 'earn-view',
@@ -136,11 +136,6 @@ export default {
                       component: './Earn/Hotel',
                     },
                   ],
-                },
-                {
-                  path: '/earn-view/date-price',
-                  name: 'date-price',
-                  component: './Earn/datePrice',
                 },
                 {
                   path: '/earn-view/order',
@@ -180,8 +175,7 @@ export default {
                   ],
                 },
               ],
-            },
-            // 404
+            }, // 404
             {
               component: './404',
             },
@@ -192,7 +186,6 @@ export default {
         },
       ],
     },
-
     {
       component: './404',
     },
@@ -200,7 +193,6 @@ export default {
   // Theme for antd: https://ant.design/docs/react/customize-theme-cn
   theme: {
     'primary-color': primaryColor,
-    'font-size-base': '12px',
   },
   define: {
     ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION:
@@ -246,29 +238,24 @@ export default {
     basePath: '/',
   },
   chainWebpack: webpackPlugin,
-  /*
-  proxy: {
-    '/server/api/': {
-      target: 'https://preview.pro.ant.design/',
-      changeOrigin: true,
-      pathRewrite: { '^/server': '' },
-    },
-  },
-  */
   proxy: {
     '/main/': {
-      target: 'http://this.server.com',
+      target: 'http://gss.com',
       changeOrigin: true,
     },
     // earn proxy item
     '/earn/': {
-      target: 'http://this.server.com',
+      target: 'http://tts.mitanglx.com',
       changeOrigin: true,
     },
     // global proxy item
     '/storage/': {
-      target: 'http://this.server.com',
+      target: 'http://gss.com',
       changeOrigin: true,
     },
   },
+  runtimePublicPath: true,
+  publicPath: '/admin/',
+  treeShaking: true,
+  base: '/admin',
 } as IConfig;

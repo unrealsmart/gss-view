@@ -20,6 +20,7 @@ declare module 'nzh/cn';
 declare module 'webpack-theme-color-replacer';
 declare module 'webpack-theme-color-replacer/client';
 declare module 'is-json';
+declare module 'symbol-tree';
 
 // google analytics interface
 interface GAFieldsObject {
@@ -69,6 +70,7 @@ interface AuthModelType {
 
 // global interface model
 interface GlobalDefaultModelState {
+  args?: object;
   page?: {
     current?: number | 1;
     size?: number | 20;

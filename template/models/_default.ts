@@ -1,19 +1,17 @@
 import { Effect } from 'dva';
 import { Reducer } from 'redux';
-import { reader, search, update } from '@/services/common';
+import { search, update } from '@/services/common';
 import { TE, TR } from '@/utils/taker';
 
-const REQUEST_URL = '/eran/hotel';
-const REDUCER_NAME = 'saveHotel';
+const REQUEST_URL = '/todo';
+const { run } = TR;
 
-export interface DefaultModelItem {
-}
+export interface DefaultModelItem {}
 
 export interface DefaultModelType {
   namespace: 'default';
   state: GlobalDefaultModelState;
   effects: {
-    reader: Effect;
     update: Effect;
     search: Effect;
   };
@@ -32,22 +30,16 @@ const DefaultModel: DefaultModelType = {
   },
 
   effects: {
-    *reader(action, effects) {
-      yield TE.reader(REQUEST_URL, action, effects, reader, REDUCER_NAME);
-    },
     *update(action, effects) {
-      yield TE.update(REQUEST_URL, action, effects, update, REDUCER_NAME);
+      yield TE.update(REQUEST_URL, action, effects, update);
     },
     *search(action, effects) {
-      yield TE.search(REQUEST_URL, action, effects, search, REDUCER_NAME);
+      yield TE.search(REQUEST_URL, action, effects, search);
     },
   },
 
   reducers: {
-    ...TR.run,
-    // saveHotel(state, action) {
-    //   return TR.run(state, action);
-    // },
+    run,
   },
 };
 

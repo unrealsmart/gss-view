@@ -11,10 +11,6 @@ interface RequestParams {
 }
 
 export async function search(url: string, params: SearchParams) {
-  return request(`${url}/search?${stringify(params)}`);
-}
-
-export async function reader(url: string, params: RequestParams) {
   return request(`${url}?${stringify(params)}`);
 }
 
@@ -30,7 +26,7 @@ export async function detail(url: string, { id }: RequestParams) {
 }
 
 export async function update(url: string, { id, ...params }: RequestParams) {
-  return request(`{$url}/${id}`, {
+  return request(`${url}/${id}`, {
     method: 'PUT',
     data: params,
   });

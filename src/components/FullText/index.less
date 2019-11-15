@@ -1,0 +1,18 @@
+.formItem {
+  margin-bottom: 0;
+
+  :global {
+    .ant-input-search.ant-input-group-wrapper {
+      & + button {
+        top: -1px;
+      }
+      & .ant-input {
+        border-radius: 0;
+      }
+    }
+  }
+}
+
+.inputGroup {
+  display: flex !important;
+}

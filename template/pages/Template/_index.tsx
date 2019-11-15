@@ -9,7 +9,7 @@ interface IndexState extends GlobalIndexClassState {
   //
 }
 
-class Index extends Component<IndexProps, IndexState> {
+class _index extends Component<IndexProps, IndexState> {
   state = {};
 
   componentDidMount(): void {
@@ -23,4 +23,4 @@ class Index extends Component<IndexProps, IndexState> {
 
 export default connect(() => ({
   // class model item
-}))(Index);
+}))(_index);

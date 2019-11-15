@@ -83,6 +83,7 @@ request.interceptors.request.use((url, options) => {
  * 配置response拦截器
  */
 request.interceptors.response.use(response => {
+  console.log(response);
   response
     .clone()
     .text()
@@ -90,6 +91,7 @@ request.interceptors.response.use(response => {
       const object: JsonWebTokenType = isJSON(data) ? JSON.parse(data) : {};
       if (object.ADP_LOGOUT || object.ADP_TOKEN_REFRESH) {
         if (object.ADP_TOKEN_REFRESH) {
+          console.log();
           message.warn(object.message);
         }
         // eslint-disable-next-line no-underscore-dangle

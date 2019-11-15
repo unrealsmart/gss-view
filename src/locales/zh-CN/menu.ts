@@ -57,5 +57,6 @@ export default {
   'menu.earn-view.order.booking': '预定',
   'menu.earn-view.task': '任务',
   'menu.earn-view.task.index': '任务列表',
+  'menu.earn-view.date-price': '日期价格（临时）',
   // more
 };

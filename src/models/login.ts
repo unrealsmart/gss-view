@@ -7,6 +7,7 @@ import { administratorVerification, getFakeCaptcha } from '@/services/login';
 import { setAuthority } from '@/utils/authority';
 import { getPageQuery } from '@/utils/utils';
 import { reloadAuthorized } from '@/utils/Authorized';
+import config from '../../config/config';
 
 export interface StateType {
   status?: 'ok' | 'error';
@@ -73,6 +74,7 @@ const Model: LoginModelType = {
             return;
           }
         }
+        redirect = redirect.replace(`${config.base || ''}`, '');
         yield put(routerRedux.replace(redirect || '/'));
       }
     },

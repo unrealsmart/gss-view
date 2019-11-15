@@ -3,39 +3,39 @@ import { Reducer } from 'redux';
 import { search, update } from '@/services/common';
 import { TE, TR } from '@/utils/taker';
 
-const REQUEST_URL = '/earn/hotel';
+const REQUEST_URL = '/earn/room';
 const { run } = TR;
 
-export interface EarnHotelModelItem {
+export interface EarnRoomModelItem {
   id: number;
   code: string;
+  city_id: number | string;
   hotel_id: number | string;
+  room_id: number | string;
   name_cn: string;
   name_en: string;
-  address_cn: string;
-  address_en: string;
-  advantage: number | string;
+  price_change_reminder?: number | string;
   request_status?: number | string;
 }
 
-export interface EarnHotelModelState extends GlobalDefaultModelState {
-  info?: EarnHotelModelItem | object;
+export interface EarnRoomModelState extends GlobalDefaultModelState {
+  info?: EarnRoomModelItem | object;
 }
 
-export interface EarnHotelModelType {
-  namespace: 'earnHotel';
-  state: EarnHotelModelState;
+export interface EarnRoomModelType {
+  namespace: 'earnRoom';
+  state: EarnRoomModelState;
   effects: {
     update: Effect;
     search: Effect;
   };
   reducers: {
-    run: Reducer<EarnHotelModelState>;
+    run: Reducer<EarnRoomModelState>;
   };
 }
 
-const EarnHotelModel: EarnHotelModelType = {
-  namespace: 'earnHotel',
+const EarnRoomModel: EarnRoomModelType = {
+  namespace: 'earnRoom',
 
   state: {
     args: {},
@@ -58,4 +58,4 @@ const EarnHotelModel: EarnHotelModelType = {
   },
 };
 
-export default EarnHotelModel;
+export default EarnRoomModel;
