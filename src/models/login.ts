@@ -39,15 +39,12 @@ const Model: LoginModelType = {
     *login({ payload }, { call, put }) {
       const response = yield call(administratorVerification, payload);
       const { token, currentAuthority, ...userData } = response;
-
-      if (!userData.status) {
+      if (!userData.status || !token.content) {
         return;
       }
-
       localStorage.setItem('antd-pro-user', JSON.stringify(userData));
-      localStorage.setItem('antd-pro-token', token);
+      localStorage.setItem('antd-pro-token', JSON.stringify(token));
       setAuthority(currentAuthority);
-
       yield put({
         type: 'changeLoginStatus',
         payload: response,
@@ -56,7 +53,6 @@ const Model: LoginModelType = {
         type: 'user/saveCurrentUser',
         payload: userData,
       });
-
       // Login successfully
       if (response.status) {
         const urlParams = new URL(window.location.href);

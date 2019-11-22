@@ -7,6 +7,7 @@ import { UserModelState } from './user';
 import { LoginModelType } from './login';
 import { EarnHotelModelState } from '@/models/earn/hotel';
 import { EarnTaskModelState } from '@/models/earn/task';
+import { AdministratorModelState } from '@/models/system/administrator';
 
 export { GlobalModelState, SettingModelState, UserModelState };
 
@@ -28,6 +29,9 @@ export interface ConnectState {
   settings: SettingModelState;
   user: UserModelState;
   login: LoginModelType;
+  // administrator
+  administrator: AdministratorModelState;
+  // earn
   earnHotel: EarnHotelModelState;
   earnTask: EarnTaskModelState;
 }
