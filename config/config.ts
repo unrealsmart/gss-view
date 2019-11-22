@@ -44,7 +44,7 @@ const plugins: IPlugin[] = [
       //   exclude: ['@babel/runtime', 'netlify-lambda'],
       // },
       hd: false,
-      dll: true,
+      dll: false,
     },
   ],
   [
@@ -106,12 +106,82 @@ export default {
               component: './Welcome',
             },
             {
-              path: '/admin',
-              name: 'admin',
-              icon: 'crown',
-              component: './Admin',
-              authority: ['admin'],
-            }, // temp page
+              path: '/system',
+              name: 'system',
+              icon: 'deployment-unit',
+              routes: [
+                {
+                  path: '/system/administrator',
+                  name: 'administrator',
+                  hideChildrenInMenu: true,
+                  routes: [
+                    {
+                      path: '/system/administrator',
+                      redirect: '/system/administrator/index',
+                    },
+                    {
+                      path: '/system/administrator/index',
+                      name: 'index',
+                      component: './System/Administrator/index',
+                    },
+                    {
+                      path: '/system/administrator/detail',
+                      name: 'detail',
+                      component: './System/Administrator/detail',
+                    },
+                  ],
+                },
+                {
+                  path: '/system/domain',
+                  name: 'domain',
+                },
+                {
+                  path: '/system/access-controls',
+                  name: 'access-controls',
+                },
+              ],
+            },
+            // Configure
+            {
+              path: '/configure',
+              name: 'configure',
+              icon: 'setting',
+              routes: [
+                {
+                  path: '/configure/system',
+                  name: 'system',
+                },
+                {
+                  path: '/configure/website',
+                  name: 'website',
+                },
+              ],
+            },
+            // Content
+            {
+              path: '/content',
+              name: 'content',
+              icon: 'container',
+              routes: [
+                {
+                  path: '/content/article',
+                  name: 'article',
+                },
+                {
+                  path: '/content/category',
+                  name: 'category',
+                },
+                {
+                  path: '/content/model',
+                  name: 'model',
+                },
+                {
+                  path: '/content/tag',
+                  name: 'tag',
+                },
+              ],
+            },
+            // temp page
             {
               path: '/earn-view',
               name: 'earn-view',
@@ -193,6 +263,7 @@ export default {
   // Theme for antd: https://ant.design/docs/react/customize-theme-cn
   theme: {
     'primary-color': primaryColor,
+    'font-size-base': '12px',
   },
   define: {
     ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION:
