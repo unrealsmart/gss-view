@@ -3,25 +3,32 @@ import { Reducer } from 'redux';
 import { search, update } from '@/services/common';
 import { TE, TR } from '@/utils/taker';
 
-const REQUEST_URL = '/todo';
 const { run } = TR;
+const REQUEST_URL = '/todo';
+const namespace = 'default';
 
-export interface DefaultModelItem {}
+export interface DefaultModelItem {
+  //
+}
+
+export interface DefaultModelState extends GlobalDefaultModelState {
+  //
+}
 
 export interface DefaultModelType {
-  namespace: 'default';
-  state: GlobalDefaultModelState;
+  namespace: string | 'default';
+  state: DefaultModelState;
   effects: {
     update: Effect;
     search: Effect;
   };
   reducers: {
-    [key: string]: Reducer<GlobalDefaultModelState>;
+    [key: string]: Reducer<DefaultModelState>;
   };
 }
 
 const DefaultModel: DefaultModelType = {
-  namespace: 'default',
+  namespace,
 
   state: {
     page: {},
@@ -30,11 +37,11 @@ const DefaultModel: DefaultModelType = {
   },
 
   effects: {
-    *update(action, effects) {
-      yield TE.update(REQUEST_URL, action, effects, update);
-    },
     *search(action, effects) {
       yield TE.search(REQUEST_URL, action, effects, search);
+    },
+    *update(action, effects) {
+      yield TE.update(REQUEST_URL, action, effects, update);
     },
   },
 

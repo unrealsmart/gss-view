@@ -10,7 +10,7 @@ interface FormState extends GlobalFormClassState {
   //
 }
 
-class FormPage extends Component<FormProps, FormState> {
+class BizForm extends Component<FormProps, FormState> {
   state = {};
 
   render(): React.ReactNode | undefined {
@@ -20,4 +20,4 @@ class FormPage extends Component<FormProps, FormState> {
 
 export default connect(() => ({
   //
-}))(Form.create()(FormPage));
+}))(Form.create()(BizForm));

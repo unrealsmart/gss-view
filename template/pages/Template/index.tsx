@@ -9,18 +9,18 @@ interface IndexState extends GlobalIndexClassState {
   //
 }
 
-class _index extends Component<IndexProps, IndexState> {
+class Index extends Component<IndexProps, IndexState> {
   state = {};
 
   componentDidMount(): void {
     // 使用rs工具请求数据
   }
 
-  render(): React.ReactNode | undefined {
-    return undefined;
+  render(): React.ReactNode {
+    return <div>空页面</div>;
   }
 }
 
 export default connect(() => ({
   // class model item
-}))(_index);
+}))(Index);
