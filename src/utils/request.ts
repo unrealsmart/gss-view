@@ -5,6 +5,7 @@
 import { extend } from 'umi-request';
 import { message, notification } from 'antd';
 import isJSON from 'is-json';
+import moment from 'moment';
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -62,11 +63,16 @@ const request = extend({
  * 配置request拦截器
  */
 request.interceptors.request.use((url, options) => {
-  const token = localStorage.getItem('antd-pro-token');
-  const newHeaders = token
+  const adpToken = localStorage.getItem('antd-pro-token') || '';
+  const token = isJSON(adpToken) ? JSON.parse(adpToken) : {};
+  if (Number(moment().format('X')) > token.expiry_time) {
+    console.log('token expiry');
+    console.log(token);
+  }
+  const newHeaders = token.content
     ? {
         ...options.headers,
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token.content}`,
       }
     : options.headers;
 
@@ -83,7 +89,6 @@ request.interceptors.request.use((url, options) => {
  * 配置response拦截器
  */
 request.interceptors.response.use(response => {
-  console.log(response);
   response
     .clone()
     .text()
@@ -91,7 +96,6 @@ request.interceptors.response.use(response => {
       const object: JsonWebTokenType = isJSON(data) ? JSON.parse(data) : {};
       if (object.ADP_LOGOUT || object.ADP_TOKEN_REFRESH) {
         if (object.ADP_TOKEN_REFRESH) {
-          console.log();
           message.warn(object.message);
         }
         // eslint-disable-next-line no-underscore-dangle

@@ -13,6 +13,7 @@ export interface TakeMapping {
   update: TakerEffect;
   search: TakerEffect;
   create: TakerEffect;
+  detail: TakerEffect;
 }
 
 export const TE: TakeMapping = {
@@ -51,6 +52,14 @@ export const TE: TakeMapping = {
       mode: 'create',
     });
   },
+  *detail(url, { payload }, { call, put }, model) {
+    const response = yield call(model, url, payload);
+    yield put({
+      type: 'run',
+      payload: response,
+      mode: 'detail',
+    });
+  },
 };
 
 export const TR = {
@@ -87,6 +96,12 @@ export const TR = {
     return state;
   },
   create(state: any, action: any) {
+    console.log(state);
+    console.log(action);
+
+    return {};
+  },
+  detail(state: any, action: any) {
     console.log(state);
     console.log(action);
 

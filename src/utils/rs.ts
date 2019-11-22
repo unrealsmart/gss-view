@@ -9,6 +9,7 @@ type RequestServiceFunction = (
 interface RequestService {
   search: RequestServiceFunction;
   update: RequestServiceFunction;
+  detail: RequestServiceFunction;
 }
 
 const rs: RequestService = {
@@ -17,7 +18,7 @@ const rs: RequestService = {
       const { dispatch } = that.props;
       that.setState({ dataLoading: true });
       if (dispatch) {
-        dispatch({ type: name, payload })
+        dispatch({ type: `${name}/search`, payload })
           .then(() => {
             if (that.state.dataLoading) {
               that.setState({ dataLoading: false });
@@ -31,7 +32,13 @@ const rs: RequestService = {
   update: (that, name, payload = {}) => {
     const { dispatch } = that.props;
     if (dispatch) {
-      dispatch({ type: name, payload });
+      dispatch({ type: `${name}/update`, payload });
+    }
+  },
+  detail: (that, name, payload = {}) => {
+    const { dispatch } = that.props;
+    if (dispatch) {
+      dispatch({ type: `${name}/detail`, payload });
     }
   },
 };
