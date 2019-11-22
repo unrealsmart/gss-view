@@ -6,7 +6,7 @@ interface SearchParams {
 }
 
 interface RequestParams {
-  id?: number | string;
+  id?: number | string | 0;
   [key: string]: any;
 }
 
@@ -21,11 +21,11 @@ export async function create(url: string, params: RequestParams) {
   });
 }
 
-export async function detail(url: string, { id }: RequestParams) {
+export async function detail(url: string, { id = 0 }: RequestParams) {
   return request(`${url}/${id}`);
 }
 
-export async function update(url: string, { id, ...params }: RequestParams) {
+export async function update(url: string, { id = 0, ...params }: RequestParams) {
   return request(`${url}/${id}`, {
     method: 'PUT',
     data: params,
