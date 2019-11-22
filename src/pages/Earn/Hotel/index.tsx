@@ -20,7 +20,6 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { ConnectState } from '@/models/connect';
 import rs from '@/utils/rs';
 import { SliderValue } from 'antd/es/slider';
-import FullText from '@/components/FullText';
 import request from '@/utils/request';
 import { stringify } from 'qs';
 import { EarnRoomModelItem } from '@/models/earn/room';
@@ -356,9 +355,7 @@ class HotelIndex extends Component<HotelIndexProps, HotelIndexState> {
       <PageHeaderWrapper>
         <Card bordered={false}>
           <Row gutter={16} type="flex" justify="space-between" style={{ marginBottom: 12 }}>
-            <Col>
-              <FullText {...this.props} />
-            </Col>
+            <Col>fulltext</Col>
             <Col>
               <Link to={{ pathname: '/system/administrator/create' }}>
                 <Button type="primary" icon="plus">
