@@ -1,0 +1,20 @@
+.dataManageContainer {
+  .inputGroup {
+    display: flex;
+    :global(.ant-btn) {
+      width: auto;
+      padding: 0 8px;
+      &:hover {
+        z-index: 2;
+      }
+    }
+  }
+  :global(.ant-tag) {
+    &:hover {
+      cursor: pointer;
+    }
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}
