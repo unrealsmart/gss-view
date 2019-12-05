@@ -129,6 +129,23 @@ export default {
                 {
                   path: '/system/domain',
                   name: 'domain',
+                  hideChildrenInMenu: true,
+                  routes: [
+                    {
+                      path: '/system/domain',
+                      redirect: '/system/domain/index',
+                    },
+                    {
+                      path: '/system/domain/index',
+                      name: 'index',
+                      component: './System/Domain/index',
+                    },
+                    {
+                      path: '/system/domain/editor',
+                      name: 'edit',
+                      component: './System/Domain/form',
+                    },
+                  ],
                 },
                 {
                   path: '/system/access-controls',
@@ -259,6 +276,7 @@ export default {
   // Theme for antd: https://ant.design/docs/react/customize-theme-cn
   theme: {
     // ...darkTheme,
+    'font-size-base': '12px',
   },
   define: {
     ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION:
