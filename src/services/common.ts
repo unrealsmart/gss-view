@@ -3,6 +3,7 @@ import { stringify } from 'qs';
 
 interface SearchParams {
   content?: string;
+  expiry_time?: number | string;
 }
 
 interface RequestParams {
@@ -11,7 +12,9 @@ interface RequestParams {
 }
 
 export async function search(url: string, params: SearchParams) {
-  return request(`${url}?${stringify(params)}`);
+  const str = stringify(params);
+  const part = !str ? str : `?${str}`;
+  return request(`${url}${part}`);
 }
 
 export async function create(url: string, params: RequestParams) {

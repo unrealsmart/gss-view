@@ -4,20 +4,13 @@ import { detail, search, update } from '@/services/common';
 import { TE, TR } from '@/utils/taker';
 
 const { run } = TR;
-const REQUEST_URL = '/main/administrator';
-const namespace = 'administrator';
+const REQUEST_URL = '/main/domain';
+const namespace = 'domain';
 
-export interface AdministratorModelItem {
+export interface DomainModelItem {
   id: number;
-  username: string;
-  domain: {
-    [key: string]: any;
-  };
-  avatar: object[];
-  email: string;
-  phone: number | string;
-  nickname: string;
-  gender: number;
+  name: string;
+  title: string;
   description: string;
   status: number | string | 0;
   create_time: number | string | '0000-00-00 00:00:00';
@@ -25,24 +18,24 @@ export interface AdministratorModelItem {
   [key: string]: any;
 }
 
-export interface AdministratorModelState extends GlobalDefaultModelState {
+export interface DomainModelState extends GlobalDefaultModelState {
   //
 }
 
-export interface AdministratorModelType {
+export interface DomainModelType {
   namespace: string | 'default';
-  state: AdministratorModelState;
+  state: DomainModelState;
   effects: {
     update: Effect;
     search: Effect;
     detail: Effect;
   };
   reducers: {
-    [key: string]: Reducer<AdministratorModelState>;
+    [key: string]: Reducer<DomainModelState>;
   };
 }
 
-const DefaultModel: AdministratorModelType = {
+const DefaultModel: DomainModelType = {
   namespace,
 
   state: {

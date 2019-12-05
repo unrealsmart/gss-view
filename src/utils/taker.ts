@@ -102,9 +102,9 @@ export const TR = {
     return {};
   },
   detail(state: any, action: any) {
-    console.log(state);
-    console.log(action);
-
-    return {};
+    return {
+      ...state,
+      info: action.payload,
+    };
   },
 };

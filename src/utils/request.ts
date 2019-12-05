@@ -68,6 +68,10 @@ request.interceptors.request.use((url, options) => {
   if (Number(moment().format('X')) > token.expiry_time) {
     console.log('token expiry');
     console.log(token);
+    // eslint-disable-next-line no-underscore-dangle
+    // window.g_app._store.dispatch({
+    //   type: 'login/logout',
+    // });
   }
   const newHeaders = token.content
     ? {
@@ -94,10 +98,8 @@ request.interceptors.response.use(response => {
     .text()
     .then(data => {
       const object: JsonWebTokenType = isJSON(data) ? JSON.parse(data) : {};
-      if (object.ADP_LOGOUT || object.ADP_TOKEN_REFRESH) {
-        if (object.ADP_TOKEN_REFRESH) {
-          message.warn(object.message);
-        }
+      if (object.ADP_LOGOUT) {
+        message.warn(object.message);
         // eslint-disable-next-line no-underscore-dangle
         window.g_app._store.dispatch({
           type: 'login/logout',

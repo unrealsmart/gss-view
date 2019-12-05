@@ -1,36 +1,52 @@
 import React, { Component, ReactNode } from 'react';
-import { Button, Card, Checkbox, Col, Dropdown, Form, Input, Menu, Row, Table } from 'antd';
+import { Button, Card, Checkbox, Col, Dropdown, Form, Input, Menu, Modal, Row, Table } from 'antd';
 import { FormComponentProps } from 'antd/es/form';
 import { TableProps } from 'antd/es/table';
 import styles from './index.less';
+import config from '../../../config/config';
 
 interface DataManagerProps extends Component, FormComponentProps {
   showType: 'table' | 'card' | string;
   columns: object[];
   loading: boolean | false;
+  // 表格相关配置
   table: TableProps<any>;
-  fulltext?: [];
-  //
+  // actions
+  actions: {
+    create: {
+      mode?: string | 'new-page' | 'modal';
+      // TODO path 不需要 config.base 时的设计
+      path?: ''; // mode 为 'new-page' 时必须设置，path 前默认添加 config.base
+      component?: Component; // mode 为 'modal' 时必须设置，并且穿
+    };
+    editor: {
+      mode?: string | 'new-page' | 'modal';
+      path?: '';
+      component?: Component;
+    };
+    [key: string]: any;
+  };
+  // events
   onSearch: (value: string, event?: any) => void;
-  //
-  onShowType: (type: string) => void;
-  onColumnChange: (columns: object[]) => void;
-  onDataShowTypeChange: (type: string) => void;
+  onShowTypeChange: (type: string) => void;
+  onColumnsChange: (columns: object[]) => void;
   // any
   [key: string]: any;
 }
 
 interface DataManagerState {
-  //
   columns: object[];
   columnsVisible: boolean | false;
+  createActionVisible: boolean | false;
+  createActionConfirmLoading: boolean | false;
 }
 
 class DataManager extends Component<DataManagerProps, DataManagerState> {
   state = {
-    //
     columns: [],
     columnsVisible: false,
+    createActionVisible: false,
+    createActionConfirmLoading: false,
   };
 
   componentDidMount(): void {
@@ -65,14 +81,28 @@ class DataManager extends Component<DataManagerProps, DataManagerState> {
     });
   };
 
+  createActionClick = (): void => {
+    this.setState({
+      createActionVisible: true,
+    });
+  };
+
+  createActionSubmit = () => {
+    this.setState({
+      createActionConfirmLoading: true,
+    });
+    console.log('submit');
+  };
+
   search = () => {
     //
   };
 
   render(): ReactNode {
-    const { table } = this.props;
-    const { columns, columnsVisible } = this.state;
+    const { table, actions } = this.props;
+    const { columns, columnsVisible, createActionVisible, createActionConfirmLoading } = this.state;
 
+    // 在 Table 组件使用的 columns 数据中移除未展示的字段
     const newColumns: object[] = [];
     columns.forEach((item: any) => {
       const { show = true } = item;
@@ -80,7 +110,7 @@ class DataManager extends Component<DataManagerProps, DataManagerState> {
         newColumns.push(item);
       }
     });
-    //
+
     const ColumnMenu = (
       <Menu>
         {columns.map((item: any) => {
@@ -97,7 +127,6 @@ class DataManager extends Component<DataManagerProps, DataManagerState> {
       </Menu>
     );
 
-    //
     return (
       <div className={styles.dataManageContainer}>
         <Card bordered={false}>
@@ -134,14 +163,37 @@ class DataManager extends Component<DataManagerProps, DataManagerState> {
                   <Button />
                 </Col>
                 <Col>
-                  <Button type="primary" icon="plus">
-                    新建
-                  </Button>
+                  {actions.create.mode === 'new-page' ? (
+                    <Button
+                      type="primary"
+                      icon="plus"
+                      href={`${config.base}${actions.create.path}`}
+                    >
+                      新建
+                    </Button>
+                  ) : (
+                    <Button type="primary" icon="plus" onClick={this.createActionClick}>
+                      新建
+                    </Button>
+                  )}
                 </Col>
               </Row>
             </Col>
           </Row>
           <Table rowKey="id" {...table} columns={newColumns} />
+          <Modal
+            title={actions.create ? '新建' : '编辑'}
+            visible={createActionVisible}
+            confirmLoading={createActionConfirmLoading}
+            onOk={this.createActionSubmit}
+            onCancel={() => {
+              this.setState({
+                createActionVisible: false,
+              });
+            }}
+          >
+            modal
+          </Modal>
         </Card>
       </div>
     );

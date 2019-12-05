@@ -14,7 +14,7 @@ class BizForm extends Component<FormProps, FormState> {
   state = {};
 
   render(): React.ReactNode | undefined {
-    return undefined;
+    return <Form>123</Form>;
   }
 }
 

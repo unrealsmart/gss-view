@@ -8,9 +8,11 @@ import { CurrentUser } from '@/models/user';
 import BizIcon from '@/components/BizIcon';
 import router from 'umi/router';
 import rs from '@/utils/rs';
+import { AdministratorModelItem } from '@/models/system/administrator';
 
 interface AdministratorDetailProps extends ConnectProps {
   currentUser: CurrentUser;
+  detail: AdministratorModelItem;
 }
 
 interface AdministratorDetailState {
@@ -28,7 +30,7 @@ class AdministratorDetail extends Component<AdministratorDetailProps, Administra
   }
 
   render(): React.ReactNode {
-    const { currentUser } = this.props;
+    const { currentUser, detail } = this.props;
     const { tabKey } = this.state;
     const tabList = [
       {
@@ -54,26 +56,29 @@ class AdministratorDetail extends Component<AdministratorDetailProps, Administra
               <Avatar size={128} shape="square" src={currentUser.avatar} />
             </Col>
             <Col xs={12} md={6}>
-              <div className={styles.username}>{currentUser.username}</div>
+              <div className={styles.username}>
+                {detail.username || 'NULL'}
+                {currentUser.username === detail.username && '（当前账户）'}
+              </div>
               <div className={styles.email}>
                 <BizIcon.AliyunOw type="aliyun-ow-icon-test33" style={{ fontSize: 16 }} />
-                {currentUser.email ? (
-                  <a href={`mailto:${currentUser.email}`}>{currentUser.email}</a>
+                {detail.email ? (
+                  <a href={`mailto:${detail.email}`}>{detail.email}</a>
                 ) : (
                   <span>未填写</span>
                 )}
               </div>
               <div className={styles.phone}>
                 <BizIcon.AliyunOw type="aliyun-ow-icon-test24" style={{ fontSize: 16 }} />
-                {currentUser.phone ? (
-                  <a href={`tel:${currentUser.phone}`}>{currentUser.phone}</a>
+                {detail.phone ? (
+                  <a href={`tel:${detail.phone}`}>{detail.phone}</a>
                 ) : (
                   <span>未填写</span>
                 )}
               </div>
               <div className={styles.address}>
                 <BizIcon.AliyunOw type="aliyun-ow-icon-test20" style={{ fontSize: 16 }} />
-                <span>{currentUser.address || '未填写'}</span>
+                <span>{detail.address || '未填写'}</span>
               </div>
             </Col>
             <Col xs={24} md={12}>
@@ -111,5 +116,5 @@ class AdministratorDetail extends Component<AdministratorDetailProps, Administra
 
 export default connect(({ user, administrator }: ConnectState) => ({
   currentUser: user.currentUser,
-  administrator,
+  detail: administrator.info,
 }))(AdministratorDetail);

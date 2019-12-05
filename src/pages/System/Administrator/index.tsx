@@ -106,9 +106,13 @@ class AdministratorIndex extends Component<AdministratorIndexProps, Administrato
                 <Divider type="vertical" />
                 <Link to={`/system/administrator/editor?id=${id}`}>编辑</Link>
                 <Divider type="vertical" />
-                <Popconfirm title="是否删除？">
-                  <a>删除</a>
-                </Popconfirm>
+                {record.username === 'admin' ? (
+                  <a className="disabled">删除</a>
+                ) : (
+                  <Popconfirm title="是否删除？">
+                    <a>删除</a>
+                  </Popconfirm>
+                )}
               </div>
             );
           },

@@ -50,7 +50,6 @@ declare let ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION: 'site' | undefine
 // global interface json web token type
 interface JsonWebTokenType {
   ADP_LOGOUT?: boolean;
-  ADP_TOKEN_REFRESH?: boolean;
   message?: string;
   token?: string;
 }
