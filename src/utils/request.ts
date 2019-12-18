@@ -66,12 +66,16 @@ request.interceptors.request.use((url, options) => {
   const adpToken = localStorage.getItem('antd-pro-token') || '';
   const token = isJSON(adpToken) ? JSON.parse(adpToken) : {};
   if (Number(moment().format('X')) > token.expiry_time) {
-    console.log('token expiry');
-    console.log(token);
-    // eslint-disable-next-line no-underscore-dangle
-    // window.g_app._store.dispatch({
-    //   type: 'login/logout',
-    // });
+    const explodeUrl: string[] = ['/main/ping', '/main/all-config/adp'];
+    if (explodeUrl.includes(url)) {
+      // eslint-disable-next-line no-underscore-dangle
+      const dispatch: any = window.g_app._store ? window.g_app._store.dispatch : null;
+      if (dispatch) {
+        dispatch({
+          type: 'login/logout',
+        });
+      }
+    }
   }
   const newHeaders = token.content
     ? {

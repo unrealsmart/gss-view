@@ -26,7 +26,7 @@ class AdministratorIndex extends Component<AdministratorIndexProps, Administrato
 
   componentDidMount(): void {
     // 使用rs工具请求数据
-    rs.search(this, 'administrator');
+    rs(this, 'administrator/search');
   }
 
   render(): React.ReactNode {
@@ -130,11 +130,14 @@ class AdministratorIndex extends Component<AdministratorIndexProps, Administrato
         <DataManager
           showType={showType}
           table={table}
-          onSearch={(value: string) => {
-            rs.search(this, 'administrator', {
-              fulltext: value,
-            });
+          create={{
+            mode: 'modal',
           }}
+          // onSearch={(value: string) => {
+          //   rs(this, 'administrator/search', {
+          //     fulltext: value,
+          //   });
+          // }}
         />
       </PageHeaderWrapper>
     );

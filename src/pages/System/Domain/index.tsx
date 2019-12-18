@@ -27,7 +27,7 @@ class DomainIndex extends Component<DomainIndexProps, DomainIndexState> {
 
   componentDidMount(): void {
     // 使用rs工具请求数据
-    rs.search(this, 'domain');
+    rs(this, 'domain/search');
   }
 
   render(): React.ReactNode {
@@ -105,7 +105,7 @@ class DomainIndex extends Component<DomainIndexProps, DomainIndexState> {
           }}
           createPath="/system/domain/editor"
           onSearch={(value: string) => {
-            rs.search(this, 'domain', {
+            rs(this, 'domain/search', {
               fulltext: value,
             });
           }}

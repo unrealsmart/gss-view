@@ -41,7 +41,7 @@ class HotelIndex extends Component<HotelIndexProps, HotelIndexState> {
   };
 
   componentDidMount(): void {
-    rs.search(this, 'earnHotel/search');
+    rs(this, 'earnHotel/search');
   }
 
   handleExpand = (expanded: boolean, record: EarnHotelModelItem) => {
@@ -164,7 +164,7 @@ class HotelIndex extends Component<HotelIndexProps, HotelIndexState> {
               max={3}
               onChange={(value: SliderValue) => {
                 if (!record.request_status) {
-                  rs.update(this, 'earnHotel/update', {
+                  rs(this, 'earnHotel/update', {
                     id: record.id,
                     advantage: value,
                   });
@@ -377,13 +377,13 @@ class HotelIndex extends Component<HotelIndexProps, HotelIndexState> {
               ...earnHotel.page,
               showSizeChanger: true,
               onChange: (page, pageSize) => {
-                rs.search(this, 'earnHotel/search', {
+                rs(this, 'earnHotel/search', {
                   page,
                   page_size: pageSize,
                 });
               },
               onShowSizeChange: (current, size) => {
-                rs.search(this, 'earnHotel/search', {
+                rs(this, 'earnHotel/search', {
                   page: current,
                   page_size: size,
                 });

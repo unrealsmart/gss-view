@@ -26,7 +26,7 @@ class AdministratorDetail extends Component<AdministratorDetailProps, Administra
 
   componentDidMount(): void {
     const { query = {} }: any = this.props.location;
-    rs.detail(this, 'administrator', query);
+    rs(this, 'administrator/detail', query);
   }
 
   render(): React.ReactNode {

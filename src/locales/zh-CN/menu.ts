@@ -76,7 +76,7 @@ export default {
   'menu.content.category': '分类',
   'menu.content.model': '模型',
   'menu.content.tag': '标签',
-  // Earn
+  // Tools: Earn
   'menu.earn-view': 'Earn',
   'menu.earn-view.hotel': '酒店',
   'menu.earn-view.hotel.index': '酒店列表',
@@ -86,5 +86,7 @@ export default {
   'menu.earn-view.task': '任务',
   'menu.earn-view.task.index': '任务列表',
   'menu.earn-view.date-price': '日期价格（临时）',
+  // Tools: WOWG
+  'menu.WOWG': '魔金趋势',
   // more
 };

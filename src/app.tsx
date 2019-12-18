@@ -14,6 +14,12 @@ function fetchADPConfig(oldRender: Function): void {
   });
 }
 
+// export function onRouteChange({ location, routes, action }: any) {
+//   console.log(location);
+//   console.log(routes);
+//   console.log(action);
+// }
+
 export function render(oldRender: Function): void {
   request('/main/ping').then(data => {
     ReactDOM.render(<></>, document.getElementById('loading'));

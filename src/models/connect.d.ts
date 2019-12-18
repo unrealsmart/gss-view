@@ -9,6 +9,7 @@ import { EarnHotelModelState } from '@/models/earn/hotel';
 import { EarnTaskModelState } from '@/models/earn/task';
 import { AdministratorModelState } from '@/models/system/administrator';
 import { DomainModelState } from '@/models/system/domain';
+import { WOWGModelState } from '@/models/tools/wowg';
 
 export { GlobalModelState, SettingModelState, UserModelState };
 
@@ -33,9 +34,11 @@ export interface ConnectState {
   // administrator
   administrator: AdministratorModelState;
   domain: DomainModelState;
-  // earn
+  // tools: earn
   earnHotel: EarnHotelModelState;
   earnTask: EarnTaskModelState;
+  // tools: WOWG
+  wowg: WOWGModelState;
 }
 
 export interface Route extends MenuDataItem {

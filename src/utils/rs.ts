@@ -1,46 +1,45 @@
-type RequestServiceFunction = (
-  that: {
-    [key: string]: any;
-  },
-  name: string,
-  payload?: object | [],
-) => void | any;
+import { ComponentProps } from 'react';
 
-interface RequestService {
-  search: RequestServiceFunction;
-  update: RequestServiceFunction;
-  detail: RequestServiceFunction;
-}
+/**
+ * todo 未使用
+ * 根据预定义的调用模式更新附加状态
+ * 操作     更新值     方式
+ * search   list,page fetch
+ * create   list      inc
+ * update   list      change
+ * delete   list      dec
+ * detail   info      change
+ */
 
-const rs: RequestService = {
-  search: (that, name, payload = {}) =>
-    new Promise(() => {
-      const { dispatch } = that.props;
-      that.setState({ dataLoading: true });
-      if (dispatch) {
-        dispatch({ type: `${name}/search`, payload })
-          .then(() => {
-            if (that.state.dataLoading) {
-              that.setState({ dataLoading: false });
-            }
-          })
-          .catch(() => {
-            that.setState({ dataLoading: false });
-          });
-      }
-    }),
-  update: (that, name, payload = {}) => {
-    const { dispatch } = that.props;
-    if (dispatch) {
-      dispatch({ type: `${name}/update`, payload });
-    }
-  },
-  detail: (that, name, payload = {}) => {
-    const { dispatch } = that.props;
-    if (dispatch) {
-      dispatch({ type: `${name}/detail`, payload });
-    }
-  },
+export default (
+  that: ComponentProps<any>,
+  type: string,
+  payload: object | object[] = {},
+  callback?: Function,
+): void => {
+  // const [namespace, actionName]: string[] = type.split('/');
+  // console.log(namespace);
+  // console.log(actionName);
+
+  // 执行前需更新状态，防止重复执行
+  that.setState({
+    dataLoading: true,
+  });
+
+  const { dispatch } = that.props;
+  if (dispatch) {
+    dispatch({ type, payload })
+      .then(() => {
+        that.setState({
+          dataLoading: false,
+        });
+        if (callback) callback();
+      })
+      .catch(() => {
+        that.setState({
+          dataLoading: false,
+        });
+        if (callback) callback();
+      });
+  }
 };
-
-export default rs;

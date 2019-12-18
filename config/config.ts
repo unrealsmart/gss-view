@@ -100,6 +100,7 @@ export default {
               icon: 'smile',
               component: './Welcome',
             },
+            // System
             {
               path: '/system',
               name: 'system',
@@ -193,7 +194,7 @@ export default {
                 },
               ],
             },
-            // temp page
+            // Tools: earn
             {
               path: '/earn-view',
               name: 'earn-view',
@@ -257,7 +258,24 @@ export default {
                   ],
                 },
               ],
-            }, // 404
+            },
+            // Tools:
+            {
+              path: '/wow-gold',
+              name: 'WOWG',
+              icon: 'pay-circle',
+              routes: [
+                {
+                  path: '/wow-gold',
+                  redirect: '/wow-gold/index',
+                },
+                {
+                  path: 'index',
+                  component: './Tools/WOWG/index',
+                },
+              ],
+            },
+            // 404
             {
               component: './404',
             },
@@ -327,13 +345,18 @@ export default {
       target: 'http://gss.com',
       changeOrigin: true,
     },
-    // earn proxy item
+    // global proxy item
+    '/storage/': {
+      target: 'http://gss.com',
+      changeOrigin: true,
+    },
+    // tools: earn proxy item
     '/earn/': {
       target: 'http://tts.mitanglx.com',
       changeOrigin: true,
     },
-    // global proxy item
-    '/storage/': {
+    // tools: wow gold
+    '/tools/': {
       target: 'http://gss.com',
       changeOrigin: true,
     },
