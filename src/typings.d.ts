@@ -11,10 +11,6 @@ declare module '*.gif';
 declare module '*.bmp';
 declare module '*.tiff';
 declare module 'omit.js';
-declare module 'react-copy-to-clipboard';
-declare module 'react-fittext';
-declare module '@antv/data-set';
-declare module 'nzh/cn';
 declare module 'is-json';
 declare module 'symbol-tree';
 
@@ -32,6 +28,7 @@ interface Window {
     hitType: 'event' | 'pageview',
     fieldsObject: GAFieldsObject | string,
   ) => void;
+  reloadAuthorized: () => void;
   g_app: {
     _store: {
       dispatch?: any;

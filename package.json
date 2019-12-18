@@ -33,6 +33,7 @@
     "start:no-mock": "cross-env MOCK=none umi dev",
     "start:no-ui": "cross-env UMI_UI=none umi dev",
     "test": "umi test",
+    "tsc": "tsc",
     "test:all": "node ./tests/run-tests.js",
     "test:component": "umi test ./src/components",
     "ui": "umi ui"
@@ -57,12 +58,12 @@
     "not ie <= 10"
   ],
   "dependencies": {
-    "@ant-design/pro-layout": "^4.8.3",
+    "@ant-design/pro-layout": "^4.9.11",
     "@antv/data-set": "^0.10.2",
     "antd": "^3.23.6",
     "bizcharts": "^3.5.6",
     "classnames": "^2.2.6",
-    "dva": "^2.4.1",
+    "dva": "^2.6.0-beta.16",
     "is-json": "^2.0.1",
     "lodash": "^4.17.11",
     "moment": "^2.24.0",
@@ -85,7 +86,7 @@
     "@types/classnames": "^2.2.7",
     "@types/express": "^4.17.0",
     "@types/history": "^4.7.2",
-    "@types/jest": "^24.0.13",
+    "@types/jest": "^24.0.23",
     "@types/lodash": "^4.14.144",
     "@types/qs": "^6.5.3",
     "@types/react": "^16.8.19",
@@ -105,6 +106,7 @@
     "import-sort-parser-typescript": "^6.0.0",
     "import-sort-style-module": "^6.0.0",
     "jest-puppeteer": "^4.2.0",
+    "jsdom-global": "^3.0.2",
     "lint-staged": "^9.0.0",
     "mockjs": "^1.0.1-beta3",
     "netlify-lambda": "^1.4.13",
@@ -144,6 +146,7 @@
     "ignore": [
       ".dockerignore",
       ".git",
+      ".github",
       ".gitpod.yml",
       "CODE_OF_CONDUCT.md",
       "Dockerfile",

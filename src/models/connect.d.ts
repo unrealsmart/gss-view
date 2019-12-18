@@ -4,7 +4,7 @@ import { RouterTypes } from 'umi';
 import { GlobalModelState } from './global';
 import { DefaultSettings as SettingModelState } from '../../config/defaultSettings';
 import { UserModelState } from './user';
-import { LoginModelType } from './login';
+import { StateType } from './login';
 import { EarnHotelModelState } from '@/models/earn/hotel';
 import { EarnTaskModelState } from '@/models/earn/task';
 import { AdministratorModelState } from '@/models/system/administrator';
@@ -30,7 +30,7 @@ export interface ConnectState {
   loading: Loading;
   settings: SettingModelState;
   user: UserModelState;
-  login: LoginModelType;
+  login: StateType;
   // administrator
   administrator: AdministratorModelState;
   domain: DomainModelState;
@@ -49,5 +49,5 @@ export interface Route extends MenuDataItem {
  * @type T: Params matched in dynamic routing
  */
 export interface ConnectProps<T = {}> extends Partial<RouterTypes<Route, T>> {
-  dispatch?<K = any>(action: AnyAction): K;
+  dispatch?: Dispatch<AnyAction>;
 }
