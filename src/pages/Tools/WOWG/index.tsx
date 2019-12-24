@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Card, Button, Upload, Icon, Popover, Row, Col } from 'antd';
+import { Card, Button, Upload, Icon, Popover, Row, Col, Spin } from 'antd';
 import { UploadChangeParam } from 'antd/lib/upload/interface';
 import styles from './index.less';
 import { ConnectState } from '@/models/connect';
@@ -13,12 +13,14 @@ interface IndexProps {
 }
 
 interface IndexState extends GlobalIndexClassState {
-  importLoading: boolean | false;
+  importLoading: boolean;
+  popoverContentLoading: boolean;
 }
 
 class Index extends Component<IndexProps, IndexState> {
   state = {
     importLoading: false,
+    popoverContentLoading: false,
   };
 
   componentDidMount(): void {
@@ -42,27 +44,40 @@ class Index extends Component<IndexProps, IndexState> {
     }
   };
 
+  popoverVisibleChange = (visible: boolean) => {
+    if (visible) {
+      this.setState({
+        popoverContentLoading: true,
+      });
+      rs(this, 'wowg/dateList', {}, () => {
+        this.setState({
+          popoverContentLoading: false,
+        });
+      });
+    }
+  };
+
   render(): React.ReactNode {
     const { wowg } = this.props;
-    const { importLoading } = this.state;
+    const { importLoading, popoverContentLoading } = this.state;
 
     const popoverContent = (
       <div className={styles.popoverContentContainer}>
-        <Row gutter={12} type="flex">
-          {wowg.dateList &&
-            wowg.dateList.map(item => (
-              <Col key={item.id.toString()} span={12}>
-                <a
-                  href={`/tools/wow-gold/export/${item.id}`}
-                  className={styles.popoverContentItem}
-                  rel="noopener noreferrer"
-                  target="_blank"
-                >
-                  {item.collect_time}
-                </a>
-              </Col>
-            ))}
-        </Row>
+        <Spin spinning={popoverContentLoading}>
+          <Row gutter={12} type="flex">
+            {wowg.dateList &&
+              wowg.dateList.map(item => (
+                <Col key={item.id.toString()} span={12}>
+                  <a
+                    href={`/tools/wow-gold/export/${item.id}`}
+                    className={styles.popoverContentItem}
+                  >
+                    {item.collect_time}
+                  </a>
+                </Col>
+              ))}
+          </Row>
+        </Spin>
       </div>
     );
 
@@ -86,7 +101,11 @@ class Index extends Component<IndexProps, IndexState> {
               </Button>
             </Upload>
             <Icon type="small-dash" style={{ fontSize: 32, color: '#ccc' }} />
-            <Popover content={popoverContent} placement="bottom">
+            <Popover
+              content={popoverContent}
+              placement="bottom"
+              onVisibleChange={this.popoverVisibleChange}
+            >
               <Button icon="export" target="_blank">
                 导出
               </Button>
