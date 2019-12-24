@@ -10,9 +10,6 @@ interface LoginFormComponentProps extends FormComponentProps {
   [key: string]: any;
 }
 
-@connect(({ login }: ConnectState) => ({
-  login,
-}))
 class Login extends Component<LoginFormComponentProps> {
   state = {
     submitLoading: false,
@@ -146,4 +143,6 @@ class Login extends Component<LoginFormComponentProps> {
   }
 }
 
-export default Form.create()(Login);
+export default connect(({ login }: ConnectState) => ({
+  login,
+}))(Form.create()(Login));
