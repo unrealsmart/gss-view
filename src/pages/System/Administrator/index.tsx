@@ -29,6 +29,12 @@ class AdministratorIndex extends Component<AdministratorIndexProps, Administrato
     rs(this, 'administrator/search');
   }
 
+  componentWillUnmount(): void {
+    clearInterval();
+    clearTimeout();
+    this.setState = () => {};
+  }
+
   render(): React.ReactNode {
     const { administrator } = this.props;
     const { dataLoading, showType } = this.state;
@@ -130,9 +136,7 @@ class AdministratorIndex extends Component<AdministratorIndexProps, Administrato
         <DataManager
           showType={showType}
           table={table}
-          create={{
-            mode: 'modal',
-          }}
+          // createOpenMode="modal"
           // onSearch={(value: string) => {
           //   rs(this, 'administrator/search', {
           //     fulltext: value,

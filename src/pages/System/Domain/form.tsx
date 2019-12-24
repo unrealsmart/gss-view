@@ -13,6 +13,10 @@ interface FormState extends GlobalFormClassState {
 class BizForm extends Component<FormProps, FormState> {
   state = {};
 
+  submit = (text: string = 'play') => {
+    console.log(`${text} + submit`);
+  };
+
   render(): React.ReactNode | undefined {
     return <Form>123</Form>;
   }

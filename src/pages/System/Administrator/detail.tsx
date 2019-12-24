@@ -11,8 +11,8 @@ import rs from '@/utils/rs';
 import { AdministratorModelItem } from '@/models/system/administrator';
 
 interface AdministratorDetailProps extends ConnectProps {
-  currentUser: CurrentUser;
-  detail: AdministratorModelItem;
+  currentUser?: CurrentUser | any;
+  detail?: AdministratorModelItem | any;
 }
 
 interface AdministratorDetailState {
@@ -20,6 +20,11 @@ interface AdministratorDetailState {
 }
 
 class AdministratorDetail extends Component<AdministratorDetailProps, AdministratorDetailState> {
+  static defaultProps = {
+    currentUser: {},
+    detail: {},
+  };
+
   state = {
     tabKey: 'mySpace',
   };

@@ -15,25 +15,35 @@ interface DomainIndexProps {
   [key: string]: any;
 }
 
-interface DomainIndexState extends GlobalIndexClassState {
-  showType: 'table' | 'card' | string;
-}
+interface DomainIndexState extends GlobalIndexClassState {}
 
 class DomainIndex extends Component<DomainIndexProps, DomainIndexState> {
+  private dmRef: React.RefObject<unknown>;
+
+  constructor(props: DomainIndexProps) {
+    super(props);
+    this.dmRef = React.createRef();
+  }
+
   state = {
     dataLoading: true,
-    showType: 'table',
   };
 
   componentDidMount(): void {
-    // 使用rs工具请求数据
     rs(this, 'domain/search');
+
+    console.log(this.dmRef);
+  }
+
+  componentWillUnmount(): void {
+    clearInterval();
+    clearTimeout();
+    this.setState = () => {};
   }
 
   render(): React.ReactNode {
     const { domain } = this.props;
-    const { dataLoading, showType } = this.state;
-
+    const { dataLoading } = this.state;
     const table = {
       loading: dataLoading,
       columns: [
@@ -91,24 +101,23 @@ class DomainIndex extends Component<DomainIndexProps, DomainIndexState> {
         scrollToFirstRowOnChange: true,
       },
     };
+    const actions = {
+      create: {
+        mode: 'modal',
+        path: 'system/domain/create',
+        customRender: BizForm,
+      },
+      selector: true,
+    };
 
     return (
       <PageHeaderWrapper>
         <DataManager
-          showType={showType}
+          wrappedComponentRef={(dmRef: React.RefObject<unknown>) => {
+            this.dmRef = dmRef;
+          }}
           table={table}
-          actions={{
-            create: {
-              mode: 'modal',
-              component: BizForm,
-            },
-          }}
-          createPath="/system/domain/editor"
-          onSearch={(value: string) => {
-            rs(this, 'domain/search', {
-              fulltext: value,
-            });
-          }}
+          actions={actions}
         />
       </PageHeaderWrapper>
     );
