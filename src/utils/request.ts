@@ -5,7 +5,7 @@
 import { extend } from 'umi-request';
 import { message, notification } from 'antd';
 import isJSON from 'is-json';
-import moment from 'moment';
+import { checkLoginToken } from '@/utils/utils';
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -65,18 +65,8 @@ const request = extend({
 request.interceptors.request.use((url, options) => {
   const adpToken = localStorage.getItem('antd-pro-token') || '';
   const token = isJSON(adpToken) ? JSON.parse(adpToken) : {};
-  if (Number(moment().format('X')) > token.expiry_time) {
-    const explodeUrl: string[] = ['/main/ping', '/main/all-config/adp'];
-    if (explodeUrl.includes(url)) {
-      // eslint-disable-next-line no-underscore-dangle
-      const dispatch: any = window.g_app._store ? window.g_app._store.dispatch : null;
-      if (dispatch) {
-        dispatch({
-          type: 'login/logout',
-        });
-      }
-    }
-  }
+  checkLoginToken(token, url);
+
   const newHeaders = token.content
     ? {
         ...options.headers,

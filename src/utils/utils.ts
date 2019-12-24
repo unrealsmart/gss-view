@@ -1,6 +1,8 @@
 import { parse } from 'querystring';
 import pathRegexp from 'path-to-regexp';
 import { Route } from '@/models/connect';
+import moment from 'moment';
+import { message } from 'antd';
 
 /* eslint no-useless-escape:0 import/prefer-default-export:0 */
 const reg = /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+(?::\d+)?|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)$/;
@@ -59,3 +61,20 @@ export const getRouteAuthority = (path: string, routeData: Route[]) => {
   });
   return authorities;
 };
+
+// 检查登录令牌
+export function checkLoginToken(token: any, url: string) {
+  if (Number(moment().format('X')) > token.expiry_time) {
+    const explodeUrl: string[] = ['/main/ping', '/main/all-config/adp'];
+    if (!explodeUrl.includes(url)) {
+      message.warn('令牌已过期，请重新登录');
+      // eslint-disable-next-line no-underscore-dangle
+      const dispatch: any = window.g_app._store ? window.g_app._store.dispatch : null;
+      if (dispatch) {
+        dispatch({
+          type: 'login/logout',
+        });
+      }
+    }
+  }
+}
