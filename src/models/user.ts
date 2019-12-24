@@ -5,8 +5,11 @@ import isJSON from 'is-json';
 import { query as queryUsers } from '@/services/user';
 
 export interface CurrentUser {
+  id?: string;
+  username?: string;
   avatar?: string;
   name?: string;
+  nickname?: string;
   title?: string;
   group?: string;
   signature?: string;
@@ -14,8 +17,6 @@ export interface CurrentUser {
     key: string;
     label: string;
   }[];
-  id?: string;
-  username?: string;
   email?: string;
   phone?: string;
   address?: string;
