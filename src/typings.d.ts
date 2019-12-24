@@ -13,6 +13,7 @@ declare module '*.tiff';
 declare module 'omit.js';
 declare module 'is-json';
 declare module 'symbol-tree';
+declare module '@antv/data-set';
 
 // google analytics interface
 interface GAFieldsObject {
