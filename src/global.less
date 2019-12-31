@@ -54,6 +54,11 @@ ol {
 }
 
 :global {
+  // section ant layout
+  section.ant-layout {
+    overflow: hidden;
+  }
+
   // set user select none
   header.ant-layout-header,
   aside.ant-pro-sider-menu-sider {
@@ -128,28 +133,6 @@ ol {
 
       .antd-pro-components-header-search-index-headerSearch .anticon-search {
         font-size: 12px;
-      }
-    }
-  }
-
-  // modify ant clear icon
-  .ant-input-clear-icon {
-    color: rgba(0, 0, 0, 0.25);
-  }
-
-  // modify ant input suffix margin
-  .ant-input-affix-wrapper .ant-input-suffix .anticon {
-    &:first-child {
-      margin-right: 0 !important;
-    }
-    &:last-child {
-      margin-right: 18px;
-    }
-  }
-  .ant-input-search.ant-input-affix-wrapper.ant-input-affix-wrapper-with-clear-btn {
-    .ant-input-suffix .anticon {
-      &:last-child {
-        margin-right: 0;
       }
     }
   }

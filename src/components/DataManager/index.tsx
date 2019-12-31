@@ -1,152 +1,113 @@
-import React, { Component, FunctionComponent, ReactNode } from 'react';
-import {
-  Button,
-  Card,
-  Checkbox,
-  Col,
-  Dropdown,
-  Form,
-  Icon,
-  Input,
-  Menu,
-  Modal,
-  Row,
-  Table,
-  Tooltip,
-} from 'antd';
-import { FormComponentProps } from 'antd/es/form';
+import React, { Component } from 'react';
+import { connect } from 'dva';
+import { Form, Card, Table, Row, Col, Button, Modal } from 'antd';
 import { TableProps } from 'antd/es/table';
+import { FormComponentProps } from 'antd/es/form';
 import styles from './index.less';
-import config from '../../../config/config';
-
-type FormAction = {
-  mode?: 'new-page' | 'modal';
-  path?: ''; // TODO path 不需要 config.base 时的设计
-  customRender?: Component;
-};
+import ColumnVisible from '@/components/DataManager/ColumnVisible';
+import isJSON from 'is-json';
+import Fulltext from '@/components/DataManager/Fulltext';
+import Filter from '@/components/DataManager/Filter';
+import rs from '@/utils/rs';
+import { ConnectState } from '@/models/connect';
 
 interface DataManagerProps extends Component, FormComponentProps {
-  // 表格配置
-  table?: TableProps<object> | any;
+  // 表格（数据格式以表格为标准）
+  table?: TableProps<object>;
 
-  // 特殊
+  // 视图模式（表格 | 卡片 | 图表）(当数据项目使用自定义渲染时，此配置将会被设置为'custom')
+  viewMode?: 'table' | 'card' | 'chart';
+  // 视图切换器
+  viewSwitch?: boolean;
+  // 视图模式变化时调用
+  onViewModeChange?: (mode: string) => void;
 
-  // 状态
-  loading: boolean;
+  // 列可见项（数据列可见性组件，默认可见）
+  columnVisible?: boolean;
+  // 列可见项缓存（默认开启，将可见的列存储至本地。关闭时，）
+  columnVisibleCache?: boolean;
+  // 列可见项变化时调用
+  onColumnsVisibleChange?: () => void;
 
-  // 子组件
+  // 过滤器（使用由用户预定义的规则选中数据项，之后可执行选取通用操作，例如：导出、移入回收站等）
+  filter?: object[];
 
-  // 字段
-  fields?:
-    | boolean
-    | {
-        show?: boolean;
-        cache?: boolean; // 是否开启缓存功能（缓存根据 route path 存储于 localStorage）
-      };
-  // 选择器
-  selector?: boolean;
-  // 全文搜索
+  // 全文搜索（）
   fulltext?: boolean;
-  // 视图切换
-  views?: boolean;
+  // 全文搜索 Url
+  fulltextUrl?: string;
+  // 全文搜索表单提交时调用
+  onFulltextSubmit?: Function;
 
-  // 操作
-  actions: {
-    // 新建
-    create?: FormAction;
-    // 编辑
-    editor?: FormAction;
-    // 删除
-    delete?: any;
-    // 发布
-    publish?: any;
-    // 导入
-    import?: any;
-    // 导出
-    export?: any;
-    // 移入回收站
-    moveRecycleBin?: any;
-  };
+  // 新建
+  create: string;
 
-  // 事件
-
-  //
-  onLoading: (loading: boolean) => void;
-  // 关闭模态框
-  closeModal: Function;
-  // 打开新建
-  openCreate: Function;
-  // 打开编辑
-  openEditor: Function;
-
-  //
-  // onSearch: (value: string, event?: any) => void;
-  // onShowTypeChange: (type: string) => void;
-  // onColumnsChange: (columns: object[]) => void;
-  // any
+  // 任意配置
   [key: string]: any;
 }
 
-interface DataManagerState {
-  dataColumns: object[];
-  actionType: 'create' | 'editor';
-  formTitle: string;
-  columnVisible: boolean;
-  modalVisible: boolean;
-  modalConfirmLoading: boolean | false;
+interface DataManagerState extends GlobalIndexClassState {
+  dataColumns?: object[];
+  // 列可见项
+  // columnVisibleKeys: string[];
+  modalProps?: object;
+  modalContent?: any;
 }
 
 class DataManager extends Component<DataManagerProps, DataManagerState> {
-  private formRef: any;
-
   static defaultProps = {
-    table: {
-      columns: [],
-      dataSource: [],
-    },
-    loading: false,
-
-    fields: {
-      show: true,
-      cache: true,
-    },
-    selector: true,
-    fulltext: true,
-
-    actions: {},
+    viewMode: 'table' as const,
+    columnVisible: true,
+    columnVisibleCache: true,
   };
 
   state = {
     dataColumns: [],
-    actionType: 'create' as const,
-    formTitle: '',
-    columnVisible: false,
-    modalVisible: false,
-    modalConfirmLoading: false,
+    // columnVisibleKeys: [],
+    modalProps: {},
+    modalContent: undefined,
   };
 
   componentDidMount(): void {
     const { table } = this.props;
     this.setState({
-      dataColumns: table.columns,
+      dataColumns: this.loadColumnVisibleKeys() || (table && table.columns),
     });
-
-    console.log(this.formRef);
   }
 
-  componentWillUnmount(): void {
-    clearInterval();
-    clearTimeout();
-    this.setState = () => {};
-  }
-
-  // 显示方式切换事件
-  showTypeChange = () => {
-    console.log('on show type change');
+  saveColumnVisibleKeys = (values: object[]): void => {
+    const { location } = this.props;
+    const columnVisibleKeys: string[] = [];
+    values.forEach((item: { show?: boolean; dataIndex?: string }) => {
+      const { show = true } = item;
+      if (show && item.dataIndex !== 'action' && item.dataIndex !== undefined) {
+        columnVisibleKeys.push(item.dataIndex);
+      }
+    });
+    localStorage.setItem(`dm-column-cache:${location.pathname}`, JSON.stringify(columnVisibleKeys));
   };
 
-  // 净化列
-  purifyColumns = () => {
+  loadColumnVisibleKeys = (): object[] | false => {
+    const { location } = this.props;
+    const cache = localStorage.getItem(`dm-column-cache:${location.pathname}`);
+    if (cache && isJSON.strict(cache)) {
+      const cacheArray = JSON.parse(cache);
+      const { table } = this.props;
+      const tableColumns = (table && table.columns) || [];
+      return tableColumns.map((item: any) => {
+        if (!cacheArray.includes(item.dataIndex) && item.dataIndex !== 'action') {
+          return {
+            ...item,
+            show: false,
+          };
+        }
+        return item;
+      });
+    }
+    return false;
+  };
+
+  purifyColumns = (): object[] => {
     const { dataColumns } = this.state;
     const newDataColumns: object[] = [];
     dataColumns.forEach((item: any) => {
@@ -158,198 +119,111 @@ class DataManager extends Component<DataManagerProps, DataManagerState> {
     return newDataColumns;
   };
 
-  // 菜单列覆盖层
-  columnMenuOverlay = () => {
-    const { dataColumns } = this.state;
-    return (
-      <Menu>
-        {dataColumns.map((item: any) => {
-          const { show = true } = item;
-          if (item.dataIndex === 'action') {
-            return undefined;
-          }
-          return (
-            <Menu.Item key={item.dataIndex} onClick={this.columnMenuItemClick}>
-              <Checkbox checked={show}>{item.title}</Checkbox>
-            </Menu.Item>
-          );
-        })}
-      </Menu>
-    );
+  existSubComponents = (): boolean => {
+    const { viewSwitch, columnVisible, filter, fulltext } = this.props;
+    return !!(viewSwitch || columnVisible || (filter && filter.length) || fulltext);
   };
 
-  // 菜单列点击事件
-  columnMenuItemClick = (e: any) => {
-    e.domEvent.preventDefault(); // clicking on the menu item triggered twice! WTF?
-    const { dataColumns = [] } = this.state;
-    const showColumns: string[] = [];
-    const newColumns = dataColumns.map((item: any) => {
-      if (item.dataIndex === e.key) {
-        const { show = true } = item;
-        if (show) {
-          showColumns.push(item.title);
-        }
-        return {
-          ...item,
-          show: !show,
-        };
-      }
-      return item;
-    });
+  fulltextSearch = (value: string) => {
+    rs(this, 'domain/search', { fs: value });
+  };
+
+  openModal = (args: any) => {
     this.setState({
-      dataColumns: newColumns,
+      modalProps: args,
     });
   };
 
-  columnVisibleChange = (visible: boolean) => {
+  setModal = (title: string, visible: boolean = true, confirmLoading: boolean = false) => {
+    const modalProps = { title, visible, confirmLoading };
     this.setState({
-      columnVisible: visible,
+      modalProps,
     });
   };
-  //
-  // createActionSubmit = () => {
-  //   this.setState({
-  //     createActionConfirmLoading: true,
-  //   });
-  //   console.log('submit');
-  // };
-  //
-  // search = () => {
-  //   //
-  // };
 
-  // close modal
   closeModal = () => {
+    const { modalProps } = this.state;
     this.setState({
-      modalVisible: false,
+      modalProps: { ...modalProps, visible: false },
     });
   };
 
-  // open create
-  openCreate = () => {
-    this.setState({
-      formTitle: '新建',
-      modalVisible: true,
-    });
-  };
-
-  render(): ReactNode {
-    const { table, fields, selector, fulltext, actions } = this.props;
-    const { actionType, formTitle, columnVisible, modalVisible, modalConfirmLoading } = this.state;
-    const tableLoading: boolean = table && table.loading;
-    const isHaveChildComponent: boolean | undefined =
-      typeof fields === 'object' ? fields.show : fields;
-
-    const NotFormError: FunctionComponent = () => <span>not form</span>;
-    const CreateForm: any = (actions.create && actions.create.customRender) || NotFormError;
+  render(): React.ReactNode {
+    const { table } = this.props;
+    const { dataColumns, modalProps, modalContent } = this.state;
+    const tableLoading: boolean = !!(table && table.loading);
+    // console.log(table && table.columns);
+    // const { columnVisibleKeys } = this.state;
+    // console.log(columnVisibleKeys);
+    console.log(modalContent);
 
     return (
       <div className={styles.dataManageContainer}>
-        <Button
-          onClick={() => {
-            this.formRef.submit('test');
-          }}
-        >
-          测试 CreateForm 函数
-        </Button>
-
-        <Card bordered={false}>
-          {isHaveChildComponent && (
-            <Row type="flex" align="top" justify="space-between" style={{ marginBottom: 24 }}>
+        <Card bordered={false} style={{ marginBottom: 24 }}>
+          {this.existSubComponents() && (
+            <Row type="flex" justify="space-between" style={{ marginBottom: 24 }}>
               <Col>
-                <Row gutter={12} type="flex" align="top">
-                  {fields && (
-                    <Col>
-                      <Dropdown
-                        overlay={this.columnMenuOverlay()}
-                        visible={columnVisible}
-                        onVisibleChange={this.columnVisibleChange}
-                        disabled={tableLoading}
-                      >
-                        <Button icon="bars" />
-                      </Dropdown>
-                    </Col>
-                  )}
-                  {selector && (
-                    <Col>
-                      <Button icon="filter" disabled={tableLoading} />
-                    </Col>
-                  )}
-                  {fulltext && (
-                    <Col>
-                      <Input.Search
-                        style={{ width: 268 }}
-                        allowClear
-                        addonBefore={
-                          <>
-                            <span>全文搜索</span>
-                            <Tooltip title="全文搜索的结果取决于服务器">
-                              <Icon type="question-circle" style={{ marginLeft: 4 }} />
-                            </Tooltip>
-                          </>
-                        }
-                        disabled={tableLoading}
-                        placeholder="请输入搜索内容"
-                        onSearch={this.props.onSearch}
-                      />
-                    </Col>
-                  )}
-                </Row>
-              </Col>
-              <Col>
-                <Row gutter={12} type="flex">
+                <Row type="flex" gutter={12}>
                   <Col>
-                    {actions.create && actions.create.mode === 'new-page' && (
-                      <Button
-                        type="primary"
-                        icon="plus"
-                        href={`${config.base}${actions.create.path}`}
-                      >
-                        新建
-                      </Button>
-                    )}
-                    {actions.create && actions.create.mode === 'modal' && (
-                      <Button type="primary" icon="plus" onClick={this.openCreate}>
-                        新建
-                      </Button>
-                    )}
+                    <ColumnVisible
+                      columns={dataColumns}
+                      disabled={tableLoading}
+                      onChange={(values: object[]) => {
+                        this.setState({
+                          dataColumns: values,
+                        });
+                        this.saveColumnVisibleKeys(values);
+                      }}
+                    />
+                  </Col>
+                  <Col>
+                    <Filter disabled />
+                  </Col>
+                  <Col>
+                    <Fulltext disabled={tableLoading} onSearch={this.fulltextSearch} />
                   </Col>
                 </Row>
               </Col>
+              <Col>
+                <Button type="primary" icon="plus" onClick={() => this.setModal('新建')}>
+                  新建
+                </Button>
+              </Col>
             </Row>
           )}
-          <div style={{ position: 'relative' }}>
-            <Table rowKey="id" {...table} columns={this.purifyColumns()} />
-            <div className={styles.selectBeforeContainer}>
-              <Button type="primary" icon="audit">
-                发布
-              </Button>
-              <Button type="default" icon="export">
-                导出
-              </Button>
-              <Button type="danger" icon="delete">
-                移入回收站
-              </Button>
+          <div className={styles.dataViewContainer}>
+            <div className={styles.tableView}>
+              <Table rowKey="id" {...table} columns={this.purifyColumns()} />
             </div>
           </div>
-          <Modal
-            title={formTitle}
-            visible={modalVisible}
-            confirmLoading={modalConfirmLoading}
-            // onOk={this.createActionSubmit}
-            onCancel={this.closeModal}
-          >
-            {actions.create && actionType === 'create'}
-            <CreateForm
-              wrappedComponentRef={(ref: React.RefObject<unknown>) => {
-                this.formRef = ref;
-              }}
-            />
-          </Modal>
         </Card>
+
+        <div className={styles.cardView}>
+          <Row type="flex" gutter={12}>
+            <Col style={{ marginBottom: 12 }}>
+              <Card>卡片模式具有更多配置</Card>
+            </Col>
+            <Col style={{ marginBottom: 12 }}>
+              <Card>这些配置与表格模式不同</Card>
+            </Col>
+            <Col style={{ marginBottom: 12 }}>
+              <Card>例如间隔、每行展示数量</Card>
+            </Col>
+            <Col style={{ marginBottom: 12 }}>
+              <Card>以及多个模式：rcc 包装模式、Card.Grid、Card.Meta、瀑布流等</Card>
+            </Col>
+          </Row>
+        </div>
+
+        <Modal {...modalProps} onCancel={this.closeModal}>
+          form
+        </Modal>
       </div>
     );
   }
 }
 
-export default Form.create<DataManagerProps>()(DataManager);
+// export default Form.create<DataManagerProps>()(DataManager);
+export default connect(({ domain }: ConnectState) => ({
+  domain,
+}))(Form.create<DataManagerProps>()(DataManager));

@@ -1,15 +1,17 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
+import { Button } from 'antd';
 
-interface IndexProps {
+interface FilterProps {
+  disabled?: boolean;
   [key: string]: any;
 }
 
-interface IndexState extends GlobalIndexClassState {
+interface FilterState extends GlobalIndexClassState {
   //
 }
 
-class Index extends Component<IndexProps, IndexState> {
+class Filter extends Component<FilterProps, FilterState> {
   state = {};
 
   componentDidMount(): void {}
@@ -21,10 +23,11 @@ class Index extends Component<IndexProps, IndexState> {
   }
 
   render(): React.ReactNode {
-    return <div>空页面</div>;
+    const { disabled } = this.props;
+    return <Button icon="filter" disabled={disabled} />;
   }
 }
 
 export default connect(() => ({
   // class model item
-}))(Index);
+}))(Filter);

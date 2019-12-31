@@ -10,6 +10,14 @@ function fetchADPConfig(oldRender: Function): void {
     if (data) {
       localStorage.setItem('all-config-adp', JSON.stringify(data));
       oldRender();
+      // const timer = setInterval(() => {
+      //   const section = document.querySelector('.ant-pro-grid-content');
+      //   console.log(section);
+      //   if (section) {
+      //     ReactDOM.render(<></>, document.getElementById('loading'));
+      //     clearInterval(timer);
+      //   }
+      // }, 1000);
     } else {
       ReactDOM.render(<Termination error={data} />, document.getElementById('root'));
     }

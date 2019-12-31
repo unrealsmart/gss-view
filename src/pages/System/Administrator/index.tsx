@@ -130,18 +130,20 @@ class AdministratorIndex extends Component<AdministratorIndexProps, Administrato
         scrollToFirstRowOnChange: true,
       },
     };
+    console.log(showType);
+    console.log(table);
 
     return (
       <PageHeaderWrapper>
         <DataManager
-          showType={showType}
-          table={table}
-          // createOpenMode="modal"
-          // onSearch={(value: string) => {
-          //   rs(this, 'administrator/search', {
-          //     fulltext: value,
-          //   });
-          // }}
+        // showType={showType}
+        // table={table}
+        // createOpenMode="modal"
+        // onSearch={(value: string) => {
+        //   rs(this, 'administrator/search', {
+        //     fulltext: value,
+        //   });
+        // }}
         />
       </PageHeaderWrapper>
     );

@@ -7,7 +7,7 @@ import { ConnectState } from '@/models/connect';
 import DataManager from '@/components/DataManager';
 import { Divider, Popconfirm } from 'antd';
 import { DomainModelItem } from '@/models/system/domain';
-import BizForm from './form';
+// import BizForm from './form';
 
 interface DomainIndexProps {
   tableProps: object;
@@ -62,9 +62,21 @@ class DomainIndex extends Component<DomainIndexProps, DomainIndexState> {
           dataIndex: 'description',
         },
         {
+          title: '日期',
+          dataIndex: 'datetime',
+          width: 140,
+          render: (_: string, record: any) => (
+            <>
+              <div style={{ color: '#ccc' }}>{record.create_time || 'NULL'}</div>
+              <div>{record.update_time || 'NULL'}</div>
+            </>
+          ),
+        },
+        {
           title: '状态',
           dataIndex: 'status',
           align: 'center' as const,
+          width: 65,
           show: false,
           render: (text: any) => <div>{text}</div>,
         },
@@ -101,14 +113,14 @@ class DomainIndex extends Component<DomainIndexProps, DomainIndexState> {
         scrollToFirstRowOnChange: true,
       },
     };
-    const actions = {
-      create: {
-        mode: 'modal',
-        path: 'system/domain/create',
-        customRender: BizForm,
-      },
-      selector: true,
-    };
+    // const actions = {
+    //   create: {
+    //     mode: 'modal',
+    //     path: 'system/domain/create',
+    //     customRender: BizForm,
+    //   },
+    //   selector: true,
+    // };
 
     return (
       <PageHeaderWrapper>
@@ -116,8 +128,8 @@ class DomainIndex extends Component<DomainIndexProps, DomainIndexState> {
           wrappedComponentRef={(dmRef: React.RefObject<unknown>) => {
             this.dmRef = dmRef;
           }}
+          {...this.props}
           table={table}
-          actions={actions}
         />
       </PageHeaderWrapper>
     );

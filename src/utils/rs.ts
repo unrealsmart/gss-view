@@ -27,19 +27,18 @@ export default (
   });
 
   const { dispatch } = that.props;
-  if (dispatch) {
-    dispatch({ type, payload })
-      .then(() => {
-        that.setState({
-          dataLoading: false,
-        });
-        if (callback) callback();
-      })
-      .catch(() => {
-        that.setState({
-          dataLoading: false,
-        });
-        if (callback) callback();
-      });
+  if (!dispatch) {
+    console.warn('NOT REQUEST.');
   }
+  const response = dispatch({ type, payload });
+  if (!response.then) {
+    console.warn('REQUEST FAIL.');
+  }
+
+  response.finally(() => {
+    that.setState({
+      dataLoading: false,
+    });
+    if (callback) callback();
+  });
 };

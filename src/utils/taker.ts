@@ -10,8 +10,8 @@ type TakerEffect = (
 ) => void;
 
 export interface TakeMapping {
-  update: TakerEffect;
   search: TakerEffect;
+  update: TakerEffect;
   create: TakerEffect;
   detail: TakerEffect;
 }
