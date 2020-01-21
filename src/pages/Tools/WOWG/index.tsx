@@ -12,7 +12,7 @@ interface IndexProps {
   [key: string]: any;
 }
 
-interface IndexState extends GlobalIndexClassState {
+interface IndexState extends GlobalClassState {
   importLoading: boolean;
   popoverContentLoading: boolean;
 }

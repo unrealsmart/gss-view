@@ -14,7 +14,7 @@ interface TaskIndexProps {
   [key: string]: any;
 }
 
-interface TaskIndexState extends GlobalIndexClassState {
+interface TaskIndexState extends GlobalClassState {
   modalVisible: boolean;
   crawlTaskInterval: NodeJS.Timer | undefined;
   locking: number | string | undefined;

@@ -5,7 +5,7 @@ interface IndexProps {
   [key: string]: any;
 }
 
-interface IndexState extends GlobalIndexClassState {
+interface IndexState extends GlobalClassState {
   //
 }
 
@@ -21,10 +21,16 @@ class Index extends Component<IndexProps, IndexState> {
   }
 
   render(): React.ReactNode {
-    return <div>空页面</div>;
+    return (
+      <div>
+        空页面
+      </div>
+    );
   }
 }
 
-export default connect(() => ({
-  // class model item
+export default connect((
+  //
+) => ({
+  //
 }))(Index);

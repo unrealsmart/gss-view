@@ -62,20 +62,21 @@ interface AuthModelType {
 }
 
 // global interface model
-interface GlobalDefaultModelState {
-  args?: object;
-  page?: {
-    current?: number | 1;
-    size?: number | 20;
-    last?: number | 0;
-    total?: number | 0;
+interface GlobalModelState {
+  args: object;
+  page: object | {
+    current: number | 1;
+    size: number | 20;
+    last: number | 0;
+    total: number | 0;
   };
-  list?: [];
-  info?: object | [];
+  list: [];
+  info: object | [];
+  requesting: boolean;
 }
 
 // global index class state
-interface GlobalIndexClassState {
+interface GlobalClassState {
   // 用于指示加载状态
   dataLoading?: boolean;
   //
@@ -84,7 +85,7 @@ interface GlobalIndexClassState {
 }
 
 // global form class state
-interface GlobalFormClassState {
+interface GlobalFormState {
   // 表单加载状态
   formLoading?: boolean;
   // 表单项禁用

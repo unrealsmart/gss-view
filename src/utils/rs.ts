@@ -28,11 +28,12 @@ export default (
 
   const { dispatch } = that.props;
   if (!dispatch) {
-    console.warn('NOT REQUEST.');
+    console.error('NOT REQUEST.');
   }
-  const response = dispatch({ type, payload });
+  const { AddMode = undefined, ...newPayload }: any = payload;
+  const response = dispatch({ type, payload: newPayload, AddMode });
   if (!response.then) {
-    console.warn('REQUEST FAIL.');
+    console.error('REQUEST FAIL.');
   }
 
   response.finally(() => {

@@ -58,7 +58,7 @@
     "not ie <= 10"
   ],
   "dependencies": {
-    "@ant-design/pro-layout": "^4.10.0",
+    "@ant-design/pro-layout": "^4.10.2",
     "@antv/data-set": "^0.10.2",
     "antd": "^3.26.4",
     "bizcharts": "^3.5.6",

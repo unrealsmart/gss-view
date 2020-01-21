@@ -10,6 +10,7 @@ import { EarnTaskModelState } from '@/models/earn/task';
 import { AdministratorModelState } from '@/models/system/administrator';
 import { DomainModelState } from '@/models/system/domain';
 import { WOWGModelState } from '@/models/tools/wowg';
+import { RoleItem } from '@/model';
 
 export { GlobalModelState, SettingModelState, UserModelState };
 
@@ -34,6 +35,7 @@ export interface ConnectState {
   // administrator
   administrator: AdministratorModelState;
   domain: DomainModelState;
+  role: RoleItem;
   // tools: earn
   earnHotel: EarnHotelModelState;
   earnTask: EarnTaskModelState;

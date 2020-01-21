@@ -2,34 +2,12 @@ import { Effect } from 'dva';
 import { Reducer } from 'redux';
 import { TakeEffects, TakeReducers } from '@/utils/take';
 
-const url = '/main/administrator';
-const namespace = 'administrator';
+const url = '/main/role';
+const namespace = 'role';
 
-export interface AdministratorModelItem {
-  id: number;
-  username: string;
-  domain: {
-    [key: string]: any;
-  };
-  avatar: object[];
-  email: string;
-  phone: number | string;
-  nickname: string;
-  gender: number;
-  description: string;
-  status: number | string | 0;
-  create_time: number | string | '0000-00-00 00:00:00';
-  update_time: number | string | '0000-00-00 00:00:00';
-  [key: string]: any;
-}
-
-export interface AdministratorModelState extends GlobalModelState {
-  //
-}
-
-export interface AdministratorModelType {
-  namespace: string | 'default';
-  state: AdministratorModelState;
+export interface RoleModelType {
+  namespace: string;
+  state: GlobalModelState;
   effects: {
     create: Effect;
     remove: Effect;
@@ -38,11 +16,11 @@ export interface AdministratorModelType {
     detail: Effect;
   };
   reducers: {
-    [key: string]: Reducer<AdministratorModelState>;
+    [key: string]: Reducer<GlobalModelState>;
   };
 }
 
-const DefaultModel: AdministratorModelType = {
+const RoleModel: RoleModelType = {
   namespace,
 
   state: {
@@ -76,4 +54,4 @@ const DefaultModel: AdministratorModelType = {
   },
 };
 
-export default DefaultModel;
+export default RoleModel;

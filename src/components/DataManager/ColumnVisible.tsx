@@ -9,7 +9,7 @@ interface ColumnVisibleProps {
   [key: string]: any;
 }
 
-interface ColumnVisibleState extends GlobalIndexClassState {
+interface ColumnVisibleState extends GlobalClassState {
   visible?: boolean;
 }
 

@@ -1,10 +1,8 @@
 import { Effect } from 'dva';
 import { Reducer } from 'redux';
-import { search, update } from '@/services/common';
-import { TE, TR } from '@/utils/taker';
+import { TakeEffects, TakeReducers } from '@/utils/take';
 
-const REQUEST_URL = '/earn/hotel';
-const { run } = TR;
+const url = '/earn/hotel';
 
 export interface EarnHotelModelItem {
   id: number;
@@ -15,11 +13,11 @@ export interface EarnHotelModelItem {
   address_cn: string;
   address_en: string;
   advantage: number | string;
-  request_status?: number | string;
+  [key: string]: any;
 }
 
-export interface EarnHotelModelState extends GlobalDefaultModelState {
-  info?: EarnHotelModelItem | object;
+export interface EarnHotelModelState extends GlobalModelState {
+  info: EarnHotelModelItem | object;
 }
 
 export interface EarnHotelModelType {
@@ -30,7 +28,7 @@ export interface EarnHotelModelType {
     search: Effect;
   };
   reducers: {
-    run: Reducer<EarnHotelModelState>;
+    [key: string]: Reducer<EarnHotelModelState>;
   };
 }
 
@@ -42,19 +40,20 @@ const EarnHotelModel: EarnHotelModelType = {
     page: {},
     list: [],
     info: {},
+    requesting: false,
   },
 
   effects: {
     *search(action, effects) {
-      yield TE.search(REQUEST_URL, action, effects, search);
+      yield TakeEffects(url, action, effects);
     },
     *update(action, effects) {
-      yield TE.update(REQUEST_URL, action, effects, update);
+      yield TakeEffects(url, action, effects);
     },
   },
 
   reducers: {
-    run,
+    TakeReducers,
   },
 };
 

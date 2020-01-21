@@ -1,7 +1,7 @@
 import { Effect } from 'dva';
 import { Reducer } from 'redux';
 import { search } from '@/services/common';
-import { TE } from '@/utils/taker';
+import { TakeEffects } from '@/utils/take';
 import { runCrawlTask } from '@/services/task';
 
 export interface EarnTaskModelItem {
@@ -64,7 +64,7 @@ const EarnTaskModel: EarnTaskModelType = {
 
   effects: {
     *search(action, effects) {
-      yield TE.search('/earn/task', action, effects, search, 'saveEarnTask');
+      yield TakeEffects('/earn/task', action, effects, search, 'saveEarnTask');
     },
     *runCrawlTask({ payload }, { call, put }) {
       const response = yield call(runCrawlTask, payload);

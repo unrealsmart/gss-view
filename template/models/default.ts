@@ -1,29 +1,22 @@
 import { Effect } from 'dva';
 import { Reducer } from 'redux';
-import { search, update } from '@/services/common';
-import { TE, TR } from '@/utils/taker';
+import { TakeEffects, TakeReducers } from '@/utils/take';
 
-const { run } = TR;
-const REQUEST_URL = '/todo';
+const url = '/todo';
 const namespace = 'default';
 
-export interface DefaultModelItem {
-  //
-}
-
-export interface DefaultModelState extends GlobalDefaultModelState {
-  //
-}
-
 export interface DefaultModelType {
-  namespace: string | 'default';
-  state: DefaultModelState;
+  namespace: string;
+  state: GlobalModelState;
   effects: {
+    create: Effect;
+    remove: Effect;
     update: Effect;
     search: Effect;
+    detail: Effect;
   };
   reducers: {
-    [key: string]: Reducer<DefaultModelState>;
+    [key: string]: Reducer<GlobalModelState>;
   };
 }
 
@@ -31,22 +24,33 @@ const DefaultModel: DefaultModelType = {
   namespace,
 
   state: {
+    args: {},
     page: {},
     list: [],
     info: {},
+    requesting: false,
   },
 
   effects: {
-    *search(action, effects) {
-      yield TE.search(REQUEST_URL, action, effects, search);
+    *create(action, effects) {
+      yield TakeEffects(url, action, effects);
+    },
+    *remove(action, effects) {
+      yield TakeEffects(url, action, effects);
     },
     *update(action, effects) {
-      yield TE.update(REQUEST_URL, action, effects, update);
+      yield TakeEffects(url, action, effects);
+    },
+    *search(action, effects) {
+      yield TakeEffects(url, action, effects);
+    },
+    *detail(action, effects) {
+      yield TakeEffects(url, action, effects);
     },
   },
 
   reducers: {
-    run,
+    TakeReducers,
   },
 };
 

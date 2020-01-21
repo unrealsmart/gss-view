@@ -1,11 +1,9 @@
 import { Effect, EffectsCommandMap } from 'dva';
 import { Reducer, AnyAction } from 'redux';
-import { search, update } from '@/services/common';
-import { TE, TR } from '@/utils/taker';
+import { TakeEffects, TakeReducers } from '@/utils/take';
 import { dateList } from '@/services/tools/wowg';
 
-const { run } = TR;
-const REQUEST_URL = '/tools/wow-gold';
+const url = '/tools/wow-gold';
 const namespace = 'wowg';
 
 type dateListItem = {
@@ -17,7 +15,7 @@ export interface WOWGModelItem {
   //
 }
 
-export interface WOWGModelState extends GlobalDefaultModelState {
+export interface WOWGModelState extends GlobalModelState {
   dateList: Array<dateListItem>;
 }
 
@@ -39,18 +37,20 @@ const WOWGModel: DefaultModelType = {
   namespace,
 
   state: {
+    args: {},
     page: {},
     list: [],
     info: {},
+    requesting: false,
     dateList: [],
   },
 
   effects: {
     *search(action, effects) {
-      yield TE.search(REQUEST_URL, action, effects, search);
+      yield TakeEffects(url, action, effects);
     },
     *update(action, effects) {
-      yield TE.update(REQUEST_URL, action, effects, update);
+      yield TakeEffects(url, action, effects);
     },
     *dateList(_: AnyAction, { call, put }: EffectsCommandMap) {
       const response = yield call(dateList);
@@ -62,7 +62,7 @@ const WOWGModel: DefaultModelType = {
   },
 
   reducers: {
-    run,
+    TakeReducers,
     saveDateList(state, { payload }) {
       return {
         ...state,

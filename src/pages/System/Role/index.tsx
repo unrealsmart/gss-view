@@ -1,28 +1,26 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Link } from 'umi';
 import rs from '@/utils/rs';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { ConnectState } from '@/models/connect';
 import DataManager from '@/components/DataManager';
-import { AdministratorModelItem } from '@/models/system/administrator';
-import { Divider, Popconfirm, Tag } from 'antd';
-import BizForm from '@/pages/System/Administrator/form';
+import { Divider, Popconfirm } from 'antd';
+import { DomainModelItem } from '@/models/system/domain';
+import BizForm from './form';
+import tree from '@/utils/tree';
 
-interface AdministratorIndexProps {
+interface RoleIndexProps {
   tableProps: object;
   fieldShow: object;
   [key: string]: any;
 }
 
-interface AdministratorIndexState extends GlobalClassState {
-  //
-}
+interface RoleIndexState extends GlobalClassState {}
 
-class AdministratorIndex extends Component<AdministratorIndexProps, AdministratorIndexState> {
+class RoleIndex extends Component<RoleIndexProps, RoleIndexState> {
   private dmRef: React.RefObject<unknown>;
 
-  constructor(props: AdministratorIndexProps) {
+  constructor(props: RoleIndexProps) {
     super(props);
     this.dmRef = React.createRef();
   }
@@ -32,8 +30,6 @@ class AdministratorIndex extends Component<AdministratorIndexProps, Administrato
   };
 
   componentDidMount(): void {
-    // 使用rs工具请求数据
-    rs(this, 'administrator/search');
     rs(this, 'domain/search');
   }
 
@@ -44,9 +40,8 @@ class AdministratorIndex extends Component<AdministratorIndexProps, Administrato
   }
 
   render(): React.ReactNode {
-    const { currentUser, administrator } = this.props;
+    const { domain } = this.props;
     const { dataLoading } = this.state;
-
     const table = {
       loading: dataLoading,
       columns: [
@@ -56,54 +51,30 @@ class AdministratorIndex extends Component<AdministratorIndexProps, Administrato
           width: 65,
         },
         {
-          title: '用户名',
-          dataIndex: 'username',
+          title: '标题',
+          dataIndex: 'title',
           width: 120,
-        },
-        {
-          title: '租域',
-          dataIndex: 'domain',
-          align: 'center' as const,
-          width: 72,
-          render: (_: void, { domain }: AdministratorModelItem) => (
-            <Link to={`/system/domain?id=${domain.id}`} style={{ display: 'inline-block' }}>
-              <Tag color="magenta">{domain.title}</Tag>
-            </Link>
-          ),
-        },
-        {
-          title: '角色',
-          dataIndex: 'roles',
-          width: 150,
-          align: 'center' as const,
-          render: (text: object[]) => (
-            <div>
-              {text.map((item: any) => (
-                <Tag key={item.sub}>{item.des}</Tag>
-              ))}
-            </div>
-          ),
-        },
-        {
-          title: '手机号码',
-          dataIndex: 'phone',
-          width: 98,
-          render: (text: string) => <a href={`tel:${text}`}>{text}</a>,
-        },
-        {
-          title: '邮箱',
-          dataIndex: 'email',
-          width: 138,
-          render: (text: string) => <a href={`mailto:${text}`}>{text}</a>,
         },
         {
           title: '描述',
           dataIndex: 'description',
         },
         {
+          title: '日期',
+          dataIndex: 'datetime',
+          width: 140,
+          render: (_: string, record: any) => (
+            <>
+              <div style={{ color: '#ccc' }}>{record.create_time || 'NULL'}</div>
+              <div>{record.update_time || 'NULL'}</div>
+            </>
+          ),
+        },
+        {
           title: '状态',
           dataIndex: 'status',
           align: 'center' as const,
+          width: 65,
           show: false,
           render: (text: any) => <div>{text}</div>,
         },
@@ -111,15 +82,12 @@ class AdministratorIndex extends Component<AdministratorIndexProps, Administrato
           title: '操作',
           dataIndex: 'action',
           width: 140,
-          align: 'center',
           fixed: 'right',
-          render: (_: void, record: AdministratorModelItem) => {
+          render: (_: void, record: DomainModelItem) => {
             const { id = 0 } = record;
             return (
               <div>
-                <Link to={`/system/administrator/detail?id=${id}`}>详情</Link>
-                <Divider type="vertical" />
-                {(record.username === 'admin' && currentUser.username !== 'admin') ? (
+                {record.name === 'main' ? (
                   <a className="disabled">编辑</a>
                 ) : (
                   <a onClick={() => {
@@ -130,12 +98,12 @@ class AdministratorIndex extends Component<AdministratorIndexProps, Administrato
                   </a>
                 )}
                 <Divider type="vertical" />
-                {record.username === 'admin' ? (
+                {record.name === 'main' ? (
                   <a className="disabled">删除</a>
                 ) : (
                   <Popconfirm title="是否删除？" onConfirm={() => {
                     const { remove }: any = this.dmRef;
-                    if (remove) remove(this, 'administrator/remove');
+                    if (remove) remove(this, 'domain/remove');
                   }}>
                     <a>删除</a>
                   </Popconfirm>
@@ -145,12 +113,13 @@ class AdministratorIndex extends Component<AdministratorIndexProps, Administrato
           },
         },
       ],
-      dataSource: administrator.list,
+      dataSource: domain.list,
       scroll: {
         x: 900,
         scrollToFirstRowOnChange: true,
       },
     };
+    const tabList = tree.fetchTabList(domain.list);
 
     return (
       <PageHeaderWrapper>
@@ -158,14 +127,22 @@ class AdministratorIndex extends Component<AdministratorIndexProps, Administrato
           wrappedComponentRef={(dmRef: React.RefObject<unknown>) => {
             this.dmRef = dmRef;
           }}
+          card={{
+            tabList,
+            onTabChange: (key: string) => {
+              this.setState({ dataLoading: true });
+              console.log(tree.fetch(domain.list, key, 'name'));
+              rs(this, 'role/search');
+            },
+          }}
           table={table}
           create={{
             component: BizForm,
-            rsp: () => [this, 'administrator/create'],
+            rsp: () => [this, 'domain/create'],
           }}
           editor={{
             component: BizForm,
-            rsp: () => [this, 'administrator/update'],
+            rsp: () => [this, 'domain/update'],
           }}
           actions={{}}
           {...this.props}
@@ -175,7 +152,9 @@ class AdministratorIndex extends Component<AdministratorIndexProps, Administrato
   }
 }
 
-export default connect(({ user, administrator }: ConnectState) => ({
-  currentUser: user.currentUser,
-  administrator,
-}))(AdministratorIndex);
+export default connect(({
+  domain, role
+}: ConnectState) => ({
+  role,
+  domain,
+}))(RoleIndex);

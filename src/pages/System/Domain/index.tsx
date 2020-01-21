@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Link } from 'umi';
 import rs from '@/utils/rs';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { ConnectState } from '@/models/connect';
 import DataManager from '@/components/DataManager';
 import { Divider, Popconfirm } from 'antd';
 import { DomainModelItem } from '@/models/system/domain';
+import BizForm from './form';
 // import BizForm from './form';
 
 interface DomainIndexProps {
@@ -15,7 +15,7 @@ interface DomainIndexProps {
   [key: string]: any;
 }
 
-interface DomainIndexState extends GlobalIndexClassState {}
+interface DomainIndexState extends GlobalClassState {}
 
 class DomainIndex extends Component<DomainIndexProps, DomainIndexState> {
   private dmRef: React.RefObject<unknown>;
@@ -31,8 +31,6 @@ class DomainIndex extends Component<DomainIndexProps, DomainIndexState> {
 
   componentDidMount(): void {
     rs(this, 'domain/search');
-
-    console.log(this.dmRef);
   }
 
   componentWillUnmount(): void {
@@ -92,13 +90,21 @@ class DomainIndex extends Component<DomainIndexProps, DomainIndexState> {
                 {record.name === 'main' ? (
                   <a className="disabled">编辑</a>
                 ) : (
-                  <Link to={`/system/domain/editor?id=${id}`}>编辑</Link>
+                  <a onClick={() => {
+                    const { editor }: any = this.dmRef;
+                    if (editor) editor(id);
+                  }}>
+                    编辑
+                  </a>
                 )}
                 <Divider type="vertical" />
                 {record.name === 'main' ? (
                   <a className="disabled">删除</a>
                 ) : (
-                  <Popconfirm title="是否删除？">
+                  <Popconfirm title="是否删除？" onConfirm={() => {
+                    const { remove }: any = this.dmRef;
+                    if (remove) remove(this, 'domain/remove');
+                  }}>
                     <a>删除</a>
                   </Popconfirm>
                 )}
@@ -113,14 +119,6 @@ class DomainIndex extends Component<DomainIndexProps, DomainIndexState> {
         scrollToFirstRowOnChange: true,
       },
     };
-    // const actions = {
-    //   create: {
-    //     mode: 'modal',
-    //     path: 'system/domain/create',
-    //     customRender: BizForm,
-    //   },
-    //   selector: true,
-    // };
 
     return (
       <PageHeaderWrapper>
@@ -128,8 +126,17 @@ class DomainIndex extends Component<DomainIndexProps, DomainIndexState> {
           wrappedComponentRef={(dmRef: React.RefObject<unknown>) => {
             this.dmRef = dmRef;
           }}
-          {...this.props}
           table={table}
+          create={{
+            component: BizForm,
+            rsp: () => [this, 'domain/create'],
+          }}
+          editor={{
+            component: BizForm,
+            rsp: () => [this, 'domain/update'],
+          }}
+          actions={{}}
+          {...this.props}
         />
       </PageHeaderWrapper>
     );

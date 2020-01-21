@@ -62,6 +62,7 @@ export default {
   'menu.system.domain.index': '域组首页',
   'menu.system.domain.create': '新建域组',
   'menu.system.domain.editor': '编辑域组',
+  'menu.system.role': '角色',
   'menu.system.access-controls': '权限',
   'menu.system.access-controls.index': '权限首页',
   'menu.system.access-controls.create': '新建权限',

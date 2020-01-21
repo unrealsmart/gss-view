@@ -57,6 +57,7 @@ ol {
   // section ant layout
   section.ant-layout {
     overflow: hidden;
+    transition: all 0.2s;
   }
 
   // set user select none
@@ -71,6 +72,7 @@ ol {
     box-shadow: none;
 
     .ant-pro-sider-menu-logo {
+      height: 64px;
       padding: 0;
       border-bottom: 1px solid #eee;
       box-shadow: none;
@@ -140,6 +142,10 @@ ol {
   // fix menu light submenu popup background
   .ant-menu-light.ant-menu-submenu-popup {
     background: transparent;
+  }
+
+  .ant-popover-inner-content {
+    min-width: 134px;
   }
 
   // fix html tag a attr disabled

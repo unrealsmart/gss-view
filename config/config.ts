@@ -86,12 +86,12 @@ export default {
     {
       path: '/',
       component: '../layouts/SecurityLayout',
-      authority: ['*'],
+      authority: ['*', 'admin'],
       routes: [
         {
           path: '/',
           component: '../layouts/BasicLayout',
-          authority: ['*'],
+          authority: ['admin'],
           routes: [
             {
               path: '/',
@@ -102,6 +102,11 @@ export default {
               name: 'welcome',
               icon: 'smile',
               component: './Welcome',
+            },
+            // Dev
+            {
+              path: '/dev',
+              component: './dev'
             },
             // System
             {
@@ -150,6 +155,11 @@ export default {
                       component: './System/Domain/form',
                     },
                   ],
+                },
+                {
+                  path: '/system/role',
+                  name: 'role',
+                  component: './System/Role/index',
                 },
                 {
                   path: '/system/access-controls',

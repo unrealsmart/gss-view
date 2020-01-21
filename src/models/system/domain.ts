@@ -1,10 +1,8 @@
 import { Effect } from 'dva';
 import { Reducer } from 'redux';
-import { detail, search, update } from '@/services/common';
-import { TE, TR } from '@/utils/taker';
+import { TakeEffects, TakeReducers } from '@/utils/take';
 
-const { run } = TR;
-const REQUEST_URL = '/main/domain';
+const url = '/main/domain';
 const namespace = 'domain';
 
 export interface DomainModelItem {
@@ -18,7 +16,7 @@ export interface DomainModelItem {
   [key: string]: any;
 }
 
-export interface DomainModelState extends GlobalDefaultModelState {
+export interface DomainModelState extends GlobalModelState {
   //
 }
 
@@ -26,8 +24,9 @@ export interface DomainModelType {
   namespace: string | 'default';
   state: DomainModelState;
   effects: {
-    update: Effect;
     search: Effect;
+    create: Effect;
+    update: Effect;
     detail: Effect;
   };
   reducers: {
@@ -35,7 +34,7 @@ export interface DomainModelType {
   };
 }
 
-const DefaultModel: DomainModelType = {
+const DomainModel: DomainModelType = {
   namespace,
 
   state: {
@@ -43,23 +42,27 @@ const DefaultModel: DomainModelType = {
     page: {},
     list: [],
     info: {},
+    requesting: false,
   },
 
   effects: {
     *search(action, effects) {
-      yield TE.search(REQUEST_URL, action, effects, search);
+      yield TakeEffects(url, action, effects);
     },
-    *detail(action, effects) {
-      yield TE.detail(REQUEST_URL, action, effects, detail);
+    *create(action, effects) {
+      yield TakeEffects(url, action, effects);
     },
     *update(action, effects) {
-      yield TE.update(REQUEST_URL, action, effects, update);
+      yield TakeEffects(url, action, effects);
+    },
+    *detail(action, effects) {
+      yield TakeEffects(url, action, effects);
     },
   },
 
   reducers: {
-    run,
+    TakeReducers,
   },
 };
 
-export default DefaultModel;
+export default DomainModel;

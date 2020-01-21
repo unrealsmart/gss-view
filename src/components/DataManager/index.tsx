@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Form, Card, Table, Row, Col, Button, Modal } from 'antd';
+import { Form, Card, Table, Row, Col, Button, Modal, Divider } from 'antd';
 import { TableProps } from 'antd/es/table';
 import { FormComponentProps } from 'antd/es/form';
 import styles from './index.less';
@@ -10,6 +10,7 @@ import Fulltext from '@/components/DataManager/Fulltext';
 import Filter from '@/components/DataManager/Filter';
 import rs from '@/utils/rs';
 import { ConnectState } from '@/models/connect';
+import { CardProps } from 'antd/es/card';
 
 interface DataManagerProps extends Component, FormComponentProps {
   // 表格（数据格式以表格为标准）
@@ -39,33 +40,58 @@ interface DataManagerProps extends Component, FormComponentProps {
   // 全文搜索表单提交时调用
   onFulltextSubmit?: Function;
 
-  // 新建
-  create: string;
+  // 内置操作
+  create?: {
+    path?: string;
+    params?: object;
+    component?: Component;
+  };
+  editor?: {
+    path?: string;
+    params?: object;
+    component?: Component;
+  };
+  delete?: {
+    path?: string;
+    params?: object;
+  };
+
+  // 操作
+  actions?: {
+    [key: string]: Function;
+  };
+
+  // 卡片
+  card?: CardProps;
 
   // 任意配置
   [key: string]: any;
 }
 
-interface DataManagerState extends GlobalIndexClassState {
+interface DataManagerState extends GlobalClassState {
   dataColumns?: object[];
-  // 列可见项
-  // columnVisibleKeys: string[];
   modalProps?: object;
-  modalContent?: any;
+  mcc?: Component;
+  formData?: object;
+  formSign?: string;
 }
 
 class DataManager extends Component<DataManagerProps, DataManagerState> {
+  private formRef: React.RefObject<unknown> | undefined;
+
   static defaultProps = {
     viewMode: 'table' as const,
     columnVisible: true,
     columnVisibleCache: true,
+    actions: {},
   };
 
   state = {
     dataColumns: [],
-    // columnVisibleKeys: [],
     modalProps: {},
-    modalContent: undefined,
+    mcc: undefined,
+    formData: undefined,
+    formSign: undefined,
   };
 
   componentDidMount(): void {
@@ -128,12 +154,6 @@ class DataManager extends Component<DataManagerProps, DataManagerState> {
     rs(this, 'domain/search', { fs: value });
   };
 
-  openModal = (args: any) => {
-    this.setState({
-      modalProps: args,
-    });
-  };
-
   setModal = (title: string, visible: boolean = true, confirmLoading: boolean = false) => {
     const modalProps = { title, visible, confirmLoading };
     this.setState({
@@ -148,21 +168,81 @@ class DataManager extends Component<DataManagerProps, DataManagerState> {
     });
   };
 
+  create = () => {
+    const { create } = this.props;
+    this.setModal('新建');
+    this.setState({
+      mcc: create && create.component,
+      formData: {},
+      formSign: 'create',
+    });
+    if (this.formRef) {
+      const { loadData }: any = this.formRef;
+      if (loadData) loadData({});
+    }
+  };
+
+  editor = (id: number | string) => {
+    const { editor } = this.props;
+    this.setModal('更新');
+    this.setState({
+      mcc: editor && editor.component,
+      formData: { id },
+      formSign: 'editor',
+    });
+    if (this.formRef) {
+      const { loadData }: any = this.formRef;
+      if (loadData) loadData({ id });
+    }
+  };
+
+  remove = (id: number | string) => {
+    console.log('dm remove');
+  };
+
+  submit = () => {
+    if (!this.formRef) {
+      return;
+    }
+    const { props }: any = this.formRef;
+    if (!props) {
+      return;
+    }
+    const { modalProps }: any = this.state;
+    this.setModal(modalProps.title, modalProps.visible, true);
+    const { form } = props;
+    form.validateFieldsAndScroll((errors: object, values: object) => {
+      const { formSign }: any = this.state;
+      if (!errors && this.props[formSign]) {
+        const { rsp, onSubmit }: any = this.props[formSign];
+        if (rsp) {
+          const [ index, type ] = rsp();
+          rs(index, type, values, () => {
+            this.setModal(modalProps.title, false, false);
+          });
+        }
+        else if (onSubmit) {
+          onSubmit(values);
+        }
+        else {
+          console.log('没有执行 rsp 或 onSubmit');
+        }
+      }
+    });
+  };
+
   render(): React.ReactNode {
-    const { table } = this.props;
-    const { dataColumns, modalProps, modalContent } = this.state;
+    const { table, card } = this.props;
+    const { dataColumns, modalProps, mcc, formData } = this.state;
     const tableLoading: boolean = !!(table && table.loading);
-    // console.log(table && table.columns);
-    // const { columnVisibleKeys } = this.state;
-    // console.log(columnVisibleKeys);
-    console.log(modalContent);
+    const Mcc: any = mcc || (() => <span style={{ color: '#f00' }}>未载入内容</span>);
 
     return (
       <div className={styles.dataManageContainer}>
-        <Card bordered={false} style={{ marginBottom: 24 }}>
+        <Card bordered={false} style={{ marginBottom: 24 }} {...card}>
           {this.existSubComponents() && (
-            <Row type="flex" justify="space-between" style={{ marginBottom: 24 }}>
-              <Col>
+            <Row type="flex" justify="space-between" style={{ marginBottom: 12 }}>
+              <Col style={{ marginBottom: 12 }}>
                 <Row type="flex" gutter={12}>
                   <Col>
                     <ColumnVisible
@@ -177,6 +257,9 @@ class DataManager extends Component<DataManagerProps, DataManagerState> {
                     />
                   </Col>
                   <Col>
+                    <Button icon="safety" disabled />
+                  </Col>
+                  <Col>
                     <Filter disabled />
                   </Col>
                   <Col>
@@ -184,16 +267,30 @@ class DataManager extends Component<DataManagerProps, DataManagerState> {
                   </Col>
                 </Row>
               </Col>
-              <Col>
-                <Button type="primary" icon="plus" onClick={() => this.setModal('新建')}>
-                  新建
-                </Button>
+              <Col style={{ marginBottom: 12 }}>
+                <Row type="flex" gutter={12}>
+                  <Col>
+                    <Button icon="setting" disabled />
+                  </Col>
+                  <Col style={{ display: 'flex', alignItems: 'center' }}>
+                    <Divider type="vertical" style={{ margin: 0 }} />
+                  </Col>
+                  <Col>
+                    <Button type="primary" icon="plus" onClick={this.create}>
+                      新建
+                    </Button>
+                  </Col>
+                </Row>
               </Col>
             </Row>
           )}
           <div className={styles.dataViewContainer}>
             <div className={styles.tableView}>
-              <Table rowKey="id" {...table} columns={this.purifyColumns()} />
+              <Table
+                {...table}
+                rowKey="id"
+                columns={this.purifyColumns()}
+              />
             </div>
           </div>
         </Card>
@@ -215,8 +312,13 @@ class DataManager extends Component<DataManagerProps, DataManagerState> {
           </Row>
         </div>
 
-        <Modal {...modalProps} onCancel={this.closeModal}>
-          form
+        <Modal {...modalProps} onOk={this.submit} onCancel={this.closeModal}>
+          <Mcc
+            wrappedComponentRef={(ref: React.RefObject<unknown>) => {
+              this.formRef = ref;
+            }}
+            value={formData}
+          />
         </Modal>
       </div>
     );

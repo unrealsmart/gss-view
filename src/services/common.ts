@@ -34,3 +34,9 @@ export async function update(url: string, { id = 0, ...params }: RequestParams) 
     data: params,
   });
 }
+
+export async function remove(url: string, { id = 0 }: RequestParams) {
+  return request(`${url}/${id}`, {
+    method: 'DELETE',
+  });
+}

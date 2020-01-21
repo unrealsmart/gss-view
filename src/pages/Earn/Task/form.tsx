@@ -7,7 +7,7 @@ interface FormProps extends FormComponentProps {
   //
 }
 
-interface FormState extends GlobalFormClassState {
+interface FormState extends GlobalFormState {
   //
 }
 

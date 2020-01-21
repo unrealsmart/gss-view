@@ -7,7 +7,7 @@ interface FilterProps {
   [key: string]: any;
 }
 
-interface FilterState extends GlobalIndexClassState {
+interface FilterState extends GlobalClassState {
   //
 }
 

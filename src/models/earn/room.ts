@@ -1,10 +1,8 @@
 import { Effect } from 'dva';
 import { Reducer } from 'redux';
-import { search, update } from '@/services/common';
-import { TE, TR } from '@/utils/taker';
+import { TakeEffects, TakeReducers } from '@/utils/take';
 
-const REQUEST_URL = '/earn/room';
-const { run } = TR;
+const url = '/earn/room';
 
 export interface EarnRoomModelItem {
   id: number;
@@ -18,8 +16,8 @@ export interface EarnRoomModelItem {
   request_status?: number | string;
 }
 
-export interface EarnRoomModelState extends GlobalDefaultModelState {
-  info?: EarnRoomModelItem | object;
+export interface EarnRoomModelState extends GlobalModelState {
+  info: EarnRoomModelItem | object;
 }
 
 export interface EarnRoomModelType {
@@ -30,7 +28,7 @@ export interface EarnRoomModelType {
     search: Effect;
   };
   reducers: {
-    run: Reducer<EarnRoomModelState>;
+    [key: string]: Reducer<EarnRoomModelState>;
   };
 }
 
@@ -42,19 +40,20 @@ const EarnRoomModel: EarnRoomModelType = {
     page: {},
     list: [],
     info: {},
+    requesting: false,
   },
 
   effects: {
     *search(action, effects) {
-      yield TE.search(REQUEST_URL, action, effects, search);
+      yield TakeEffects(url, action, effects);
     },
     *update(action, effects) {
-      yield TE.update(REQUEST_URL, action, effects, update);
+      yield TakeEffects(url, action, effects);
     },
   },
 
   reducers: {
-    run,
+    TakeReducers,
   },
 };
 

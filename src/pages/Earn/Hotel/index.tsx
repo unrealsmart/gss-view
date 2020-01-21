@@ -32,7 +32,7 @@ interface HotelIndexProps {
   [key: string]: any;
 }
 
-interface HotelIndexState extends GlobalIndexClassState {}
+interface HotelIndexState extends GlobalClassState {}
 
 class HotelIndex extends Component<HotelIndexProps, HotelIndexState> {
   state = {
@@ -163,7 +163,7 @@ class HotelIndex extends Component<HotelIndexProps, HotelIndexState> {
               min={0}
               max={3}
               onChange={(value: SliderValue) => {
-                if (!record.request_status) {
+                if (!record.requesting) {
                   rs(this, 'earnHotel/update', {
                     id: record.id,
                     advantage: value,

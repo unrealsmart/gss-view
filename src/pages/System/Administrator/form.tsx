@@ -1,41 +1,25 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Form, Input, Radio } from 'antd';
+import { Form, Input, Radio, TreeSelect } from 'antd';
 import { FormComponentProps } from 'antd/es/form';
 import { ConnectState } from '@/models/connect';
-import { DomainModelItem } from '@/models/system/domain';
+import { AdministratorModelItem } from '@/models/system/administrator';
 import tree from '@/utils/tree';
+import { DomainModelItem } from '@/models/system/domain';
 
 interface FormProps extends FormComponentProps {
+  administrator: AdministratorModelItem;
   domain: DomainModelItem;
   value?: any;
 }
 
 interface FormState extends GlobalFormState {
-  data?: {
-    id?: number | string;
-    pid?: number | string;
-    name?: string;
-    title?: string;
-    description?: string;
-    status?: number | string;
-    create_time?: string;
-    update_time?: string;
-  };
+  data?: any;
 }
 
 class BizForm extends Component<FormProps, FormState> {
   state = {
-    data: {
-      id: undefined,
-      pid: 0,
-      name: undefined,
-      title: undefined,
-      description: undefined,
-      status: undefined,
-      create_time: undefined,
-      update_time: undefined,
-    },
+    data: {},
   };
 
   componentDidMount(): void {
@@ -47,9 +31,9 @@ class BizForm extends Component<FormProps, FormState> {
 
   loadData = (data: object) => {
     const { id }: any = data;
-    const { domain } = this.props;
+    const { administrator } = this.props;
     this.setState({
-      data: tree.fetch(domain.list, id),
+      data: tree.fetch(administrator.list, id),
     });
   };
 
@@ -58,25 +42,43 @@ class BizForm extends Component<FormProps, FormState> {
   // };
 
   render(): React.ReactNode | undefined {
-    const { form } = this.props;
-    const { data } = this.state;
+    const { form, domain } = this.props;
+    const { data }: any = this.state;
     const { getFieldDecorator } = form;
 
     return (
       <Form>
-        <Form.Item label="名称">
-          {getFieldDecorator('name', {
-            initialValue: data.name,
+        <Form.Item label="租域">
+          {getFieldDecorator('domain', {
+            initialValue: (data.domain && data.domain.id) || 1,
             rules: [{
               required: true,
-              message: '请输入名称',
+              message: '请选择租域',
             }],
           })(
-            <Input placeholder="请输入名称" allowClear />
+            <TreeSelect
+              treeData={tree.simple(domain.list)}
+              allowClear
+              showSearch
+              treeNodeFilterProp="title"
+              placeholder="请选择租域"
+              searchPlaceholder="请输入搜索内容"
+            />
           )}
         </Form.Item>
-        <Form.Item label="标题">
-          {getFieldDecorator('title', {
+        <Form.Item label="用户名">
+          {getFieldDecorator('username', {
+            initialValue: data.username,
+            rules: [{
+              required: true,
+              message: '请输入用户名',
+            }],
+          })(
+            <Input placeholder="请输入用户名" allowClear />
+          )}
+        </Form.Item>
+        <Form.Item label="手机号码">
+          {getFieldDecorator('phone', {
             initialValue: data.title,
             rules: [{
               required: true,
@@ -129,6 +131,10 @@ class BizForm extends Component<FormProps, FormState> {
   }
 }
 
-export default connect(({ domain }: ConnectState) => ({
+export default connect(({
   domain,
+  administrator
+}: ConnectState) => ({
+  domain,
+  administrator,
 }))(Form.create()(BizForm));

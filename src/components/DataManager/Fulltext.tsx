@@ -6,7 +6,7 @@ interface FulltextProps {
   [key: string]: any;
 }
 
-interface FulltextState extends GlobalIndexClassState {
+interface FulltextState extends GlobalClassState {
   disabled?: boolean;
 }
 
