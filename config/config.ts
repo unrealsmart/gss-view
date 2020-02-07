@@ -14,6 +14,7 @@ const { ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION } = process.env;
 const isAntDesignProPreview = ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION === 'site';
 
 const plugins: IPlugin[] = [
+  ['umi-plugin-antd-icon-config', {}],
   [
     'umi-plugin-react',
     {
@@ -86,7 +87,7 @@ export default {
     {
       path: '/',
       component: '../layouts/SecurityLayout',
-      authority: ['*', 'admin'],
+      authority: ['admin'],
       routes: [
         {
           path: '/',
@@ -103,192 +104,22 @@ export default {
               icon: 'smile',
               component: './Welcome',
             },
-            // Dev
             {
-              path: '/dev',
-              component: './dev'
-            },
-            // System
-            {
-              path: '/system',
-              name: 'system',
-              icon: 'deployment-unit',
+              path: '/admin',
+              name: 'admin',
+              icon: 'crown',
+              component: './Admin',
+              authority: ['admin'],
               routes: [
                 {
-                  path: '/system/administrator',
-                  name: 'administrator',
-                  hideChildrenInMenu: true,
-                  routes: [
-                    {
-                      path: '/system/administrator',
-                      redirect: '/system/administrator/index',
-                    },
-                    {
-                      path: '/system/administrator/index',
-                      name: 'index',
-                      component: './System/Administrator/index',
-                    },
-                    {
-                      path: '/system/administrator/detail',
-                      name: 'detail',
-                      component: './System/Administrator/detail',
-                    },
-                  ],
-                },
-                {
-                  path: '/system/domain',
-                  name: 'domain',
-                  hideChildrenInMenu: true,
-                  routes: [
-                    {
-                      path: '/system/domain',
-                      redirect: '/system/domain/index',
-                    },
-                    {
-                      path: '/system/domain/index',
-                      name: 'index',
-                      component: './System/Domain/index',
-                    },
-                    {
-                      path: '/system/domain/editor',
-                      name: 'editor',
-                      component: './System/Domain/form',
-                    },
-                  ],
-                },
-                {
-                  path: '/system/role',
-                  name: 'role',
-                  component: './System/Role/index',
-                },
-                {
-                  path: '/system/access-controls',
-                  name: 'access-controls',
+                  path: '/admin/sub-page',
+                  name: 'sub-page',
+                  icon: 'smile',
+                  component: './Welcome',
+                  authority: ['admin'],
                 },
               ],
             },
-            // Configure
-            {
-              path: '/configure',
-              name: 'configure',
-              icon: 'setting',
-              routes: [
-                {
-                  path: '/configure/system',
-                  name: 'system',
-                },
-                {
-                  path: '/configure/website',
-                  name: 'website',
-                },
-              ],
-            },
-            // Content
-            {
-              path: '/content',
-              name: 'content',
-              icon: 'container',
-              routes: [
-                {
-                  path: '/content/article',
-                  name: 'article',
-                },
-                {
-                  path: '/content/category',
-                  name: 'category',
-                },
-                {
-                  path: '/content/model',
-                  name: 'model',
-                },
-                {
-                  path: '/content/tag',
-                  name: 'tag',
-                },
-              ],
-            },
-            // Tools: earn
-            {
-              path: '/earn-view',
-              name: 'earn-view',
-              icon: 'home',
-              routes: [
-                {
-                  path: '/earn-view',
-                  redirect: '/earn-view/hotel/index',
-                },
-                {
-                  path: '/earn-view/hotel',
-                  name: 'hotel',
-                  hideChildrenInMenu: true,
-                  routes: [
-                    {
-                      path: '/earn-view/hotel',
-                      redirect: '/earn-view/hotel/index',
-                    },
-                    {
-                      path: '/earn-view/hotel/index',
-                      name: 'index',
-                      component: './Earn/Hotel',
-                    },
-                  ],
-                },
-                {
-                  path: '/earn-view/order',
-                  name: 'order',
-                  hideChildrenInMenu: true,
-                  routes: [
-                    {
-                      path: '/earn-view/order',
-                      redirect: '/earn-view/order/index',
-                    },
-                    {
-                      path: '/earn-view/order/booking',
-                      name: 'booking',
-                      component: './Earn/Order/Booking',
-                    },
-                    {
-                      path: '/earn-view/order/index',
-                      name: 'index',
-                      component: './Earn/Order/Index',
-                    },
-                  ],
-                },
-                {
-                  path: '/earn-view/task',
-                  name: 'task',
-                  hideChildrenInMenu: true,
-                  routes: [
-                    {
-                      path: '/earn-view/task',
-                      redirect: '/earn-view/task/index',
-                    },
-                    {
-                      path: '/earn-view/task/index',
-                      name: 'index',
-                      component: './Earn/Task/Index',
-                    },
-                  ],
-                },
-              ],
-            },
-            // Tools:
-            {
-              path: '/wow-gold',
-              name: 'WOWG',
-              icon: 'pay-circle',
-              routes: [
-                {
-                  path: '/wow-gold',
-                  redirect: '/wow-gold/index',
-                },
-                {
-                  path: 'index',
-                  component: './Tools/WOWG/index',
-                },
-              ],
-            },
-            // 404
             {
               component: './404',
             },
@@ -354,24 +185,15 @@ export default {
   },
   // chainWebpack: webpackPlugin,
   proxy: {
-    '/main/': {
-      target: originServerUrl,
+    '/ss/': {
+      target: 'http://gss.com/',
       changeOrigin: true,
+      pathRewrite: { '^/ss': '' },
     },
-    // global proxy item
-    '/storage/': {
-      target: originServerUrl,
+    '/sr/': {
+      target: 'http://gss.com/',
       changeOrigin: true,
-    },
-    // tools: earn proxy item
-    '/earn/': {
-      target: 'http://tts.mitanglx.com',
-      changeOrigin: true,
-    },
-    // tools: wow gold
-    '/tools/': {
-      target: originServerUrl,
-      changeOrigin: true,
+      pathRewrite: { '^/sr': '/storage' },
     },
   },
   runtimePublicPath: true,
