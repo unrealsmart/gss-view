@@ -4,9 +4,7 @@ import slash from 'slash2';
 import themePluginConfig from './themePluginConfig';
 
 const { pwa } = defaultSettings;
-
-// origin server url
-const originServerUrl = 'http://gss.com';
+const serverUrl = 'http://gss.com/';
 
 // preview.pro.ant.design only do not use in your production ;
 // preview.pro.ant.design 专用环境变量，请不要在你的项目中使用它。
@@ -59,6 +57,32 @@ const plugins: IPlugin[] = [
       autoAddMenu: true,
     },
   ],
+  // [
+  //   'umi-plugin-antd-theme',
+  //   {
+  //     theme: [
+  //       {
+  //         fileName: 'dark.css',
+  //         key:'dark',
+  //         modifyVars: {
+  //           '@primary-color': '#4992BF',
+  //           '@menu-color': '#9B9B9B',
+  //           '@menu-bg': '#3A3A3A',
+  //         },
+  //       },
+  //     ],
+  //     // 是否压缩css
+  //     min: true,
+  //     // css module
+  //     isModule: true,
+  //     // 忽略 antd 的依赖
+  //     ignoreAntd: false,
+  //     // 忽略 pro-layout
+  //     ignoreProLayout: false,
+  //     // 不使用缓存
+  //     cache: true,
+  //   }
+  // ],
 ];
 
 if (isAntDesignProPreview) {
@@ -90,6 +114,16 @@ export default {
       authority: ['admin'],
       routes: [
         {
+          path: '/blank',
+          component: '../layouts/BlankLayout',
+          routes: [
+            {
+              path: '/blank',
+              component: './dev',
+            },
+          ],
+        },
+        {
           path: '/',
           component: '../layouts/BasicLayout',
           authority: ['admin'],
@@ -117,6 +151,133 @@ export default {
                   icon: 'smile',
                   component: './Welcome',
                   authority: ['admin'],
+                },
+              ],
+            },
+            {
+              path: '/config',
+              name: 'config',
+              icon: 'control',
+              component: './Config/index',
+            },
+            {
+              path: '/system',
+              name: 'system',
+              icon: 'crown',
+              // authority: ['admin'],
+              routes: [
+                {
+                  path: '/system',
+                  redirect: '/system/domain/index',
+                },
+                {
+                  path: '/system/domain',
+                  name: 'domain',
+                  routes: [
+                    {
+                      path: '/system/domain',
+                      redirect: '/system/domain/index',
+                    },
+                    {
+                      path: '/system/domain/index',
+                      component: './System/Domain',
+                    },
+                  ],
+                },
+                {
+                  path: '/system/role',
+                  name: 'role',
+                  routes: [
+                    {
+                      path: '/system/role',
+                      redirect: '/system/role/index',
+                    },
+                    {
+                      path: '/system/role/index',
+                      component: './System/Role',
+                    },
+                  ],
+                },
+                {
+                  path: '/system/authority',
+                  name: 'authority',
+                  routes: [
+                    {
+                      path: '/system/authority',
+                      redirect: '/system/authority/index',
+                    },
+                    {
+                      path: '/system/authority/index',
+                      component: './System/Authority',
+                    },
+                  ],
+                },
+                {
+                  path: '/system/administrator',
+                  name: 'administrator',
+                  routes: [
+                    {
+                      path: '/system/administrator',
+                      redirect: '/system/administrator/index',
+                    },
+                    {
+                      path: '/system/administrator/index',
+                      component: './System/Administrator',
+                    },
+                    {
+                      path: '/system/administrator/detail',
+                      component: './System/Administrator/detail',
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              path: '/content',
+              name: 'content',
+              icon: 'book',
+              routes: [
+                {
+                  path: '/content',
+                  redirect: '/content/category/index',
+                },
+                {
+                  path: '/content/category',
+                  name: 'category',
+                  routes: [
+                    {
+                      path: '/content/category',
+                      redirect: '/content/category/index',
+                    },
+                    {
+                      path: '/content/category/index',
+                      component: './Content/Category/index',
+                    },
+                  ],
+                },
+                {
+                  path: '/content/tag/index',
+                  name: 'tag',
+                  component: './Content/Tag/index',
+                },
+                {
+                  path: '/content/aem/index',
+                  name: 'aem',
+                  component: './Content/Aem/index',
+                },
+                {
+                  path: '/content/article',
+                  name: 'article',
+                  routes: [
+                    {
+                      path: '/content/article',
+                      redirect: '/content/article/index',
+                    },
+                    {
+                      path: '/content/article/index',
+                      component: './Content/Article/index',
+                    },
+                  ],
                 },
               ],
             },
@@ -186,12 +347,12 @@ export default {
   // chainWebpack: webpackPlugin,
   proxy: {
     '/ss/': {
-      target: 'http://gss.com/',
+      target: serverUrl,
       changeOrigin: true,
       pathRewrite: { '^/ss': '' },
     },
     '/sr/': {
-      target: 'http://gss.com/',
+      target: serverUrl,
       changeOrigin: true,
       pathRewrite: { '^/sr': '/storage' },
     },
