@@ -1,36 +1,29 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
+import { ConnectState } from '@/models/connect';
 
-interface IndexProps {
+interface Props {
   [key: string]: any;
 }
 
-interface IndexState extends GlobalClassState {
+interface State extends GlobalClassState {
   //
 }
 
-class Index extends Component<IndexProps, IndexState> {
+class Index extends Component<Props, State> {
   state = {};
 
   componentDidMount(): void {}
 
   componentWillUnmount(): void {
-    clearInterval();
-    clearTimeout();
     this.setState = () => {};
   }
 
   render(): React.ReactNode {
-    return (
-      <div>
-        空页面
-      </div>
-    );
+    return <div>空页面</div>;
   }
 }
 
-export default connect((
-  //
-) => ({
-  //
+export default connect(({ domain }: ConnectState) => ({
+  domain,
 }))(Index);

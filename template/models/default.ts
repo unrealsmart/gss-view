@@ -1,56 +1,48 @@
 import { Effect } from 'dva';
-import { Reducer } from 'redux';
-import { TakeEffects, TakeReducers } from '@/utils/take';
+import { AnyAction, Reducer } from 'redux';
+import { structure } from '@/utils/utils';
 
-const url = '/todo';
-const namespace = 'default';
-
-export interface DefaultModelType {
+export interface ModelType {
   namespace: string;
   state: GlobalModelState;
   effects: {
-    create: Effect;
-    remove: Effect;
-    update: Effect;
-    search: Effect;
-    detail: Effect;
+    [key: string]: Effect;
   };
   reducers: {
-    [key: string]: Reducer<GlobalModelState>;
+    [key: string]: Reducer<GlobalModelState, AnyAction>;
   };
 }
 
-const DefaultModel: DefaultModelType = {
-  namespace,
+const DefaultModel: ModelType = {
+  namespace: 'default',
 
   state: {
     args: {},
     page: {},
     list: [],
     info: {},
-    requesting: false,
   },
 
   effects: {
-    *create(action, effects) {
-      yield TakeEffects(url, action, effects);
-    },
-    *remove(action, effects) {
-      yield TakeEffects(url, action, effects);
-    },
-    *update(action, effects) {
-      yield TakeEffects(url, action, effects);
-    },
-    *search(action, effects) {
-      yield TakeEffects(url, action, effects);
-    },
-    *detail(action, effects) {
-      yield TakeEffects(url, action, effects);
-    },
+    // *create(action, effects) {
+    //   //
+    // },
+    // *remove(action, effects) {
+    //   //
+    // },
+    // *update(action, effects) {
+    //   //
+    // },
+    // *search(action, effects) {
+    //   //
+    // },
+    // *detail(action, effects) {
+    //   //
+    // },
   },
 
   reducers: {
-    TakeReducers,
+    save: (state, action) => structure(state, action),
   },
 };
 
