@@ -69,7 +69,7 @@ ol {
   // sider
   aside.ant-pro-sider-menu-sider.light {
     border-right: 1px solid #eee;
-    box-shadow: none;
+    box-shadow: 2px 0 30px 0 rgba(29, 35, 41, 0.05);
 
     .ant-pro-sider-menu-logo {
       height: 64px;
@@ -152,6 +152,16 @@ ol {
   a.disabled {
     color: rgba(0, 0, 0, 0.25);
     cursor: not-allowed;
+  }
+
+  // no page header heading
+  .no-heading {
+    .ant-page-header.has-breadcrumb {
+      padding-top: 16px;
+    }
+    .ant-page-header-heading {
+      display: none;
+    }
   }
 
   // custom google scrollbar style

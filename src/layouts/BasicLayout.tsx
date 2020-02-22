@@ -16,12 +16,11 @@ import { Dispatch } from 'redux';
 import { connect } from 'dva';
 import { Icon, Result, Button } from 'antd';
 import { formatMessage } from 'umi-plugin-react/locale';
-
 import Authorized from '@/utils/Authorized';
 import RightContent from '@/components/GlobalHeader/RightContent';
 import { ConnectState } from '@/models/connect';
-import { isAntDesignPro, getAuthorityFromRouter } from '@/utils/utils';
-import logo from '../assets/logo.jpg';
+import { isAntDesignPro, getAuthorityFromRouter, fullScreenLoading } from '@/utils/utils';
+import logo from '@/assets/logo.jpg';
 
 const noMatch = (
   <Result
@@ -120,7 +119,6 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
   /**
    * constructor
    */
-
   useEffect(() => {
     if (dispatch) {
       dispatch({
@@ -182,13 +180,14 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
       menuDataRender={menuDataRender}
       formatMessage={formatMessage}
       rightContentRender={() => <RightContent />}
-      siderWidth={200}
+      siderWidth={220}
       {...props}
       {...settings}
     >
       <Authorized authority={authorized!.authority} noMatch={noMatch}>
         {children}
       </Authorized>
+      {fullScreenLoading('leave')}
     </ProLayout>
   );
 };

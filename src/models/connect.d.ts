@@ -5,12 +5,6 @@ import { GlobalModelState } from './global';
 import { DefaultSettings as SettingModelState } from '../../config/defaultSettings';
 import { UserModelState } from './user';
 import { StateType } from './login';
-import { EarnHotelModelState } from '@/models/earn/hotel';
-import { EarnTaskModelState } from '@/models/earn/task';
-import { AdministratorModelState } from '@/models/system/administrator';
-import { DomainModelState } from '@/models/system/domain';
-import { WOWGModelState } from '@/models/tools/wowg';
-import { RoleItem } from '@/model';
 
 export { GlobalModelState, SettingModelState, UserModelState };
 
@@ -32,15 +26,18 @@ export interface ConnectState {
   settings: SettingModelState;
   user: UserModelState;
   login: StateType;
-  // administrator
-  administrator: AdministratorModelState;
-  domain: DomainModelState;
-  role: RoleItem;
-  // tools: earn
-  earnHotel: EarnHotelModelState;
-  earnTask: EarnTaskModelState;
-  // tools: WOWG
-  wowg: WOWGModelState;
+  // system
+  domain: any;
+  role: any;
+  authority: any;
+  administrator: any;
+  // content
+  category: any;
+  tag: any;
+  aem: any;
+  article: any;
+  //
+  configure: any;
 }
 
 export interface Route extends MenuDataItem {

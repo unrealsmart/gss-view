@@ -1,21 +1,25 @@
 import { Effect } from 'dva';
-import { AnyAction, Reducer } from 'redux';
+import { Reducer } from 'redux';
 import * as server from '@/services/common';
 import { structure } from '@/utils/utils';
 
-export interface RoleModelType {
+export interface AuthorityModelState extends GlobalModelState {
+  //
+}
+
+export interface AuthorityModelType {
   namespace: string;
-  state: GlobalModelState;
+  state: AuthorityModelState;
   effects: {
     [key: string]: Effect;
   };
   reducers: {
-    [key: string]: Reducer<GlobalModelState, AnyAction>;
+    [key: string]: Reducer<any>;
   };
 }
 
-const RoleModel: RoleModelType = {
-  namespace: 'role',
+const AuthorityModel: AuthorityModelType = {
+  namespace: 'authority',
 
   state: {
     args: {},
@@ -25,20 +29,21 @@ const RoleModel: RoleModelType = {
   },
 
   effects: {
-    // *search({ payload }, { call, put, select }) {
-    //
-    // },
+    *search({ payload }, { call, put }) {
+      const response = yield call(server.search, 'main/authority', payload);
+      yield put({ mode: 'search', type: 'save', payload: response });
+    },
     *create({ payload }, { call, put }) {
-      const response = yield call(server.create, 'main/role', payload);
-      yield put({ mode: 'create', type: 'save', payload: response });
+      const response = yield call(server.create, 'main/authority', payload);
+      yield put({ type: 'save', mode: 'create', payload: response });
     },
     *update({ payload }, { call, put }) {
       yield put({ type: 'save', mode: 'update', payload: { id: payload.id, loading: true } });
-      const response = yield call(server.update, 'main/role', payload);
+      const response = yield call(server.update, 'main/authority', payload);
       yield put({ type: 'save', mode: 'update', payload: { ...response, loading: false } });
     },
     *remove({ payload }, { call, put }) {
-      const response = yield call(server.remove, 'main/role', payload);
+      const response = yield call(server.remove, 'main/authority', payload);
       if (response && !(response instanceof Response)) {
         yield put({ type: 'save', mode: 'remove', payload });
       }
@@ -50,4 +55,4 @@ const RoleModel: RoleModelType = {
   },
 };
 
-export default RoleModel;
+export default AuthorityModel;

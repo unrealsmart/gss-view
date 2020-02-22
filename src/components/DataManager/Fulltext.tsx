@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Input, Tooltip, Icon } from 'antd';
+import { Input } from 'antd';
 
 interface FulltextProps {
   onSearch: (value: string, event?: any) => void;
@@ -30,14 +30,7 @@ class Fulltext extends Component<FulltextProps, FulltextState> {
       <Input.Search
         style={{ width: 268 }}
         allowClear
-        addonBefore={
-          <>
-            <span>全文搜索</span>
-            <Tooltip title="全文搜索的结果取决于服务器">
-              <Icon type="question-circle" style={{ marginLeft: 4 }} />
-            </Tooltip>
-          </>
-        }
+        addonBefore={<span>全文搜索</span>}
         disabled={disabled}
         placeholder="请输入搜索内容"
         onSearch={this.props.onSearch}

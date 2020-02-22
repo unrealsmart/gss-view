@@ -1,9 +1,7 @@
 import { Effect } from 'dva';
-import { Reducer } from 'redux';
-import { TakeEffects, TakeReducers } from '@/utils/take';
-
-const url = '/main/administrator';
-const namespace = 'administrator';
+import { AnyAction, Reducer } from 'redux';
+import * as server from '@/services/common';
+import { structure } from '@/utils/utils';
 
 export interface AdministratorModelItem {
   id: number;
@@ -18,8 +16,8 @@ export interface AdministratorModelItem {
   gender: number;
   description: string;
   status: number | string | 0;
-  create_time: number | string | '0000-00-00 00:00:00';
-  update_time: number | string | '0000-00-00 00:00:00';
+  create_time: number | string;
+  update_time: number | string;
   [key: string]: any;
 }
 
@@ -28,51 +26,41 @@ export interface AdministratorModelState extends GlobalModelState {
 }
 
 export interface AdministratorModelType {
-  namespace: string | 'default';
+  namespace: string;
   state: AdministratorModelState;
   effects: {
-    create: Effect;
-    remove: Effect;
-    update: Effect;
-    search: Effect;
-    detail: Effect;
+    [key: string]: Effect;
   };
   reducers: {
-    [key: string]: Reducer<AdministratorModelState>;
+    [key: string]: Reducer<any, AnyAction>;
   };
 }
 
 const DefaultModel: AdministratorModelType = {
-  namespace,
+  namespace: 'administrator',
 
   state: {
     args: {},
     page: {},
     list: [],
     info: {},
-    requesting: false,
   },
 
   effects: {
-    *create(action, effects) {
-      yield TakeEffects(url, action, effects);
+    *search({ payload }, { call, put }) {
+      const response = yield call(server.search, 'main/administrator', payload);
+      yield put({ mode: 'search', type: 'save', payload: response });
     },
-    *remove(action, effects) {
-      yield TakeEffects(url, action, effects);
-    },
-    *update(action, effects) {
-      yield TakeEffects(url, action, effects);
-    },
-    *search(action, effects) {
-      yield TakeEffects(url, action, effects);
-    },
-    *detail(action, effects) {
-      yield TakeEffects(url, action, effects);
+    *detail({ payload }, { call, put }) {
+      const response = yield call(server.detail, 'main/administrator', payload);
+      yield put({ mode: 'detail', type: 'save', payload: response });
     },
   },
 
   reducers: {
-    TakeReducers,
+    save(state, action) {
+      return structure(state, action);
+    },
   },
 };
 

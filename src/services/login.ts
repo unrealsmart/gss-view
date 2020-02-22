@@ -8,7 +8,7 @@ export interface LoginParamsType {
 }
 
 export async function administratorVerification(params: LoginParamsType) {
-  return request('/main/administrator/verification', {
+  return request('main/administrator/verification', {
     method: 'POST',
     data: params,
   });

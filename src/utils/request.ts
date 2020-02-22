@@ -3,9 +3,10 @@
  * 更详细的 api 文档: https://github.com/umijs/umi-request
  */
 import { extend } from 'umi-request';
-import { message, notification } from 'antd';
+import { message } from 'antd';
 import isJSON from 'is-json';
-import { checkLoginToken } from '@/utils/utils';
+import { setToken, getToken, setCurrentUser } from '@/utils/storage';
+import router from 'umi/router';
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -32,21 +33,21 @@ const errorHandler = (error: { response: Response }): Response => {
   const { response } = error;
   if (response && response.status) {
     const errorText = codeMessage[response.status] || response.statusText;
-    const { status } = response;
     const url = new URL(response.url);
-
-    response.text().then(data => {
-      const object = isJSON(data) ? JSON.parse(data) : {};
-      console.log(url);
-      if (url.pathname !== '/main/ping') {
-        message.error(`${status} ${object.message || errorText}`);
-      }
-    });
+    if (response.status >= 400) {
+      router.push(`/exception/${response.status}`);
+    }
+    response
+      .clone()
+      .text()
+      .then(data => {
+        const object = isJSON(data) ? JSON.parse(data) : {};
+        if (url.pathname !== '/ss/main/config/adp') {
+          message.error(`${response.status} ${object.message || errorText}`);
+        }
+      });
   } else if (!response) {
-    notification.error({
-      description: '您的网络发生异常，无法连接服务器',
-      message: '网络异常',
-    });
+    message.error('您的网络发生异常，无法连接服务器', 0);
   }
   return response;
 };
@@ -63,19 +64,17 @@ const request = extend({
  * 配置request拦截器
  */
 request.interceptors.request.use((url, options) => {
-  const adpToken = localStorage.getItem('antd-pro-token') || '';
-  const token = isJSON(adpToken) ? JSON.parse(adpToken) : {};
-  checkLoginToken(token, url);
-
-  const newHeaders = token.content
+  const newUrl = url.charAt(0) === '/' || /(http|https):\/\//.test(url) ? url : `/ss/${url}`;
+  const adpToken = getToken();
+  const newHeaders = adpToken
     ? {
         ...options.headers,
-        Authorization: `Bearer ${token.content}`,
+        Authorization: `Bearer ${adpToken}`,
       }
     : options.headers;
 
   return {
-    url,
+    url: newUrl,
     options: {
       ...options,
       headers: newHeaders,
@@ -84,22 +83,24 @@ request.interceptors.request.use((url, options) => {
 });
 
 /**
- * 配置response拦截器
+ * 配置response拦截器（仅处理正确的响应内容）
  */
 request.interceptors.response.use(response => {
-  response
-    .clone()
-    .text()
-    .then(data => {
-      const object: JsonWebTokenType = isJSON(data) ? JSON.parse(data) : {};
-      if (object.ADP_LOGOUT) {
-        message.warn(object.message);
-        // eslint-disable-next-line no-underscore-dangle
-        window.g_app._store.dispatch({
-          type: 'login/logout',
-        });
-      }
-    });
+  const rc = response.clone();
+  // 获取 Header 中的 Token、Authorization、Action，用于更新本地存储：adp-token、adp-user、adp-action
+  const rcToken = rc.headers.get('adp-token');
+  const rcUser = rc.headers.get('adp-user');
+  const rcAction = rc.headers.get('adp-action');
+
+  if (rcToken) setToken(rcToken);
+  if (rcUser) setCurrentUser(rcUser);
+
+  // 正常情况下，基本不可能会执行到此处，不过在某些特殊场景可能需要向客户端发送退出程序。
+  /* eslint no-underscore-dangle: 0 */
+  const store = window.g_app._store;
+  if (rcAction === 'LOGOUT' && store) {
+    store.dispatch({ type: 'login/logout' });
+  }
 
   return response;
 });

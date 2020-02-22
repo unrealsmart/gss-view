@@ -2,11 +2,11 @@ import { Reducer } from 'redux';
 import { Effect } from 'dva';
 import { stringify } from 'querystring';
 import { router } from 'umi';
-
 import { administratorVerification, getFakeCaptcha } from '@/services/login';
 import { setAuthority } from '@/utils/authority';
 import { getPageQuery } from '@/utils/utils';
 import { reloadAuthorized } from '@/utils/Authorized';
+import { setCurrentUser, setToken } from '@/utils/storage';
 import config from '../../config/config';
 
 export interface StateType {
@@ -38,20 +38,18 @@ const Model: LoginModelType = {
   effects: {
     *login({ payload }, { call, put }) {
       const response = yield call(administratorVerification, payload);
-      const { token, currentAuthority, ...userData } = response;
-      if (!userData.status || !token.content) {
+      if (response instanceof Response && !response.ok) {
         return;
       }
-      localStorage.setItem('antd-pro-user', JSON.stringify(userData));
-      localStorage.setItem('antd-pro-token', JSON.stringify(token));
-      setAuthority(currentAuthority);
+      setCurrentUser(JSON.stringify(response));
+      setAuthority(response.currentAuthority);
       yield put({
         type: 'changeLoginStatus',
         payload: response,
       });
       yield put({
         type: 'user/saveCurrentUser',
-        payload: userData,
+        payload: response,
       });
       // Login successfully
       if (response.status) {
@@ -70,7 +68,9 @@ const Model: LoginModelType = {
             return;
           }
         }
-        redirect = redirect.replace(`${config.base || ''}`, '');
+        if (redirect) {
+          redirect = redirect.replace(config.base || '', '');
+        }
         router.replace(redirect || '/');
       }
     },
@@ -83,8 +83,8 @@ const Model: LoginModelType = {
       const { redirect } = getPageQuery();
       // Note: There may be security issues, please note
       if (window.location.pathname !== '/login' && !redirect) {
-        localStorage.removeItem('antd-pro-user');
-        localStorage.removeItem('antd-pro-token');
+        setCurrentUser('');
+        setToken('');
         setAuthority('');
         reloadAuthorized();
         router.replace({

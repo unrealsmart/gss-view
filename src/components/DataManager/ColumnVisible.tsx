@@ -41,7 +41,7 @@ class ColumnVisible extends Component<ColumnVisibleProps, ColumnVisibleState> {
         {columns &&
           columns.map((item: any) => {
             const { show = true } = item;
-            if (item.dataIndex === 'action') {
+            if (item.dataIndex === undefined) {
               return undefined;
             }
             return (

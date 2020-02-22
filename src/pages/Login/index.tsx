@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import { Alert, Button, Card, Form, Input, Row, Col, Icon, Tooltip } from 'antd';
-import styles from './index.less';
 import { ConnectState } from '@/models/connect';
 import { FormComponentProps } from 'antd/lib/form';
 import { StateType } from '@/models/login';
+import { fullScreenLoading } from '@/utils/utils';
+import logo from '@/assets/logo.jpg';
+import styles from './index.less';
 
 interface LoginFormComponentProps extends FormComponentProps {
   [key: string]: any;
@@ -15,6 +17,10 @@ class Login extends Component<LoginFormComponentProps> {
     submitLoading: false,
     visible: false,
   };
+
+  componentDidMount(): void {
+    fullScreenLoading('leave');
+  }
 
   submit = (e: any) => {
     e.preventDefault();
@@ -46,14 +52,15 @@ class Login extends Component<LoginFormComponentProps> {
   };
 
   render() {
-    // const { form } = this.props;
     const { submitLoading, visible } = this.state;
     const { getFieldDecorator, getFieldError } = this.props.form;
 
     return (
       <div className={styles.local}>
         <Card bordered={false} style={{ width: 390, padding: 24, margin: '0 auto 64px' }}>
-          <div className="title">Login</div>
+          <div className="title">
+            <img src={logo} alt="Logo" style={{ height: 75 }} />
+          </div>
           {visible && <Alert message="登录失败" type="error" showIcon />}
           {/* local login */}
           <Form colon={false} hideRequiredMark onSubmit={this.submit}>

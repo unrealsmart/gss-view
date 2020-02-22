@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import { Link } from 'umi';
-import rs from '@/utils/rs';
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { ConnectState } from '@/models/connect';
 import DataManager from '@/components/DataManager';
 import { AdministratorModelItem } from '@/models/system/administrator';
-import { Divider, Popconfirm, Tag } from 'antd';
+import { Divider, Popconfirm, Tag, Switch } from 'antd';
+import { ra } from '@/utils/utils';
 import BizForm from '@/pages/System/Administrator/form';
 
 interface AdministratorIndexProps {
@@ -28,13 +27,11 @@ class AdministratorIndex extends Component<AdministratorIndexProps, Administrato
   }
 
   state = {
-    dataLoading: true,
+    dataLoading: false,
   };
 
   componentDidMount(): void {
-    // 使用rs工具请求数据
-    rs(this, 'administrator/search');
-    rs(this, 'domain/search');
+    ra(this, 'administrator/search');
   }
 
   componentWillUnmount(): void {
@@ -65,10 +62,10 @@ class AdministratorIndex extends Component<AdministratorIndexProps, Administrato
           dataIndex: 'domain',
           align: 'center' as const,
           width: 72,
-          render: (_: void, { domain }: AdministratorModelItem) => (
-            <Link to={`/system/domain?id=${domain.id}`} style={{ display: 'inline-block' }}>
-              <Tag color="magenta">{domain.title}</Tag>
-            </Link>
+          render: (_: void, user: AdministratorModelItem) => (
+            <Tag color="magenta" key={user.domain.id.toString()}>
+              {user.domain.title}
+            </Tag>
           ),
         },
         {
@@ -77,11 +74,11 @@ class AdministratorIndex extends Component<AdministratorIndexProps, Administrato
           width: 150,
           align: 'center' as const,
           render: (text: object[]) => (
-            <div>
-              {text.map((item: any) => (
-                <Tag key={item.sub}>{item.des}</Tag>
+            <>
+              {text.map((role: any) => (
+                <Tag key={role.id.toString()}>{role.title}</Tag>
               ))}
-            </div>
+            </>
           ),
         },
         {
@@ -104,12 +101,18 @@ class AdministratorIndex extends Component<AdministratorIndexProps, Administrato
           title: '状态',
           dataIndex: 'status',
           align: 'center' as const,
-          show: false,
-          render: (text: any) => <div>{text}</div>,
+          render: (text: number) => (
+            <Switch
+              checked={!!text}
+              size="small"
+              onClick={(checked: boolean) => {
+                console.log(checked);
+              }}
+            />
+          ),
         },
         {
           title: '操作',
-          dataIndex: 'action',
           width: 140,
           align: 'center',
           fixed: 'right',
@@ -119,13 +122,15 @@ class AdministratorIndex extends Component<AdministratorIndexProps, Administrato
               <div>
                 <Link to={`/system/administrator/detail?id=${id}`}>详情</Link>
                 <Divider type="vertical" />
-                {(record.username === 'admin' && currentUser.username !== 'admin') ? (
+                {record.username === 'admin' && currentUser.username !== 'admin' ? (
                   <a className="disabled">编辑</a>
                 ) : (
-                  <a onClick={() => {
-                    const { editor }: any = this.dmRef;
-                    if (editor) editor(id);
-                  }}>
+                  <a
+                    onClick={() => {
+                      const { update }: any = this.dmRef;
+                      if (update) update(id);
+                    }}
+                  >
                     编辑
                   </a>
                 )}
@@ -133,10 +138,13 @@ class AdministratorIndex extends Component<AdministratorIndexProps, Administrato
                 {record.username === 'admin' ? (
                   <a className="disabled">删除</a>
                 ) : (
-                  <Popconfirm title="是否删除？" onConfirm={() => {
-                    const { remove }: any = this.dmRef;
-                    if (remove) remove(this, 'administrator/remove');
-                  }}>
+                  <Popconfirm
+                    title="是否删除？"
+                    onConfirm={() => {
+                      const { remove }: any = this.dmRef;
+                      if (remove) remove(this, 'administrator/remove');
+                    }}
+                  >
                     <a>删除</a>
                   </Popconfirm>
                 )}
@@ -153,29 +161,29 @@ class AdministratorIndex extends Component<AdministratorIndexProps, Administrato
     };
 
     return (
-      <PageHeaderWrapper>
+      <div>
         <DataManager
           wrappedComponentRef={(dmRef: React.RefObject<unknown>) => {
             this.dmRef = dmRef;
           }}
+          instance={this}
           table={table}
-          create={{
-            component: BizForm,
-            rsp: () => [this, 'administrator/create'],
+          actions={{
+            search: { type: 'administrator/search' },
+            create: { fc: BizForm, type: 'administrator/create' },
+            update: { fc: BizForm, type: 'administrator/update' },
           }}
-          editor={{
-            component: BizForm,
-            rsp: () => [this, 'administrator/update'],
-          }}
-          actions={{}}
+          beforeElement={<div>在头部添加上一些内容</div>}
           {...this.props}
         />
-      </PageHeaderWrapper>
+      </div>
     );
   }
 }
 
-export default connect(({ user, administrator }: ConnectState) => ({
+export default connect(({ user, domain, role, administrator }: ConnectState) => ({
   currentUser: user.currentUser,
+  domain,
+  role,
   administrator,
 }))(AdministratorIndex);

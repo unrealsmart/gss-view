@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import rs from '@/utils/rs';
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { ConnectState } from '@/models/connect';
 import DataManager from '@/components/DataManager';
-import { Divider, Popconfirm } from 'antd';
-import { DomainModelItem } from '@/models/system/domain';
-import BizForm from './form';
+import { Divider, Popconfirm, Switch } from 'antd';
 import tree from '@/utils/tree';
+import { ra } from '@/utils/entrust';
+import columns from '@/utils/columns';
+import BizForm from './form';
 
 interface RoleIndexProps {
   tableProps: object;
@@ -15,7 +14,9 @@ interface RoleIndexProps {
   [key: string]: any;
 }
 
-interface RoleIndexState extends GlobalClassState {}
+interface RoleIndexState extends GlobalClassState {
+  tabKey: string;
+}
 
 class RoleIndex extends Component<RoleIndexProps, RoleIndexState> {
   private dmRef: React.RefObject<unknown>;
@@ -27,134 +28,119 @@ class RoleIndex extends Component<RoleIndexProps, RoleIndexState> {
 
   state = {
     dataLoading: true,
+    tabKey: '',
+    currentDomain: undefined,
   };
 
   componentDidMount(): void {
-    rs(this, 'domain/search');
+    ra(this, 'domain/search');
   }
 
   componentWillUnmount(): void {
-    clearInterval();
-    clearTimeout();
-    this.setState = () => {};
+    // clearInterval();
+    // clearTimeout();
+    // this.setState = () => {};
   }
 
   render(): React.ReactNode {
-    const { domain } = this.props;
-    const { dataLoading } = this.state;
-    const table = {
-      loading: dataLoading,
-      columns: [
-        {
-          title: 'ID',
-          dataIndex: 'id',
-          width: 65,
-        },
-        {
-          title: '标题',
-          dataIndex: 'title',
-          width: 120,
-        },
-        {
-          title: '描述',
-          dataIndex: 'description',
-        },
-        {
-          title: '日期',
-          dataIndex: 'datetime',
-          width: 140,
-          render: (_: string, record: any) => (
-            <>
-              <div style={{ color: '#ccc' }}>{record.create_time || 'NULL'}</div>
-              <div>{record.update_time || 'NULL'}</div>
-            </>
-          ),
-        },
-        {
-          title: '状态',
-          dataIndex: 'status',
-          align: 'center' as const,
-          width: 65,
-          show: false,
-          render: (text: any) => <div>{text}</div>,
-        },
-        {
-          title: '操作',
-          dataIndex: 'action',
-          width: 140,
-          fixed: 'right',
-          render: (_: void, record: DomainModelItem) => {
-            const { id = 0 } = record;
-            return (
-              <div>
-                {record.name === 'main' ? (
-                  <a className="disabled">编辑</a>
-                ) : (
-                  <a onClick={() => {
-                    const { editor }: any = this.dmRef;
-                    if (editor) editor(id);
-                  }}>
-                    编辑
-                  </a>
-                )}
-                <Divider type="vertical" />
-                {record.name === 'main' ? (
-                  <a className="disabled">删除</a>
-                ) : (
-                  <Popconfirm title="是否删除？" onConfirm={() => {
+    columns.instance(this);
+    const { domain, role } = this.props;
+    const { dataLoading, tabKey, currentDomain } = this.state;
+    const tableColumns = [
+      columns.id(),
+      columns.name(),
+      columns.title(),
+      columns.description(),
+      columns.datetime(),
+      columns.status({
+        render: (text: number, record: any) => (
+          <Switch
+            checked={!!text}
+            size="small"
+            disabled={record.name === 'admin'}
+            onClick={(checked: boolean) => {
+              ra(this, 'role/update', { id: record.id, status: checked ? 1 : 0 });
+            }}
+          />
+        ),
+      }),
+      columns.actions({
+        render: (_: void, record: any) => {
+          const { id = 0 } = record;
+          return (
+            <div>
+              {record.name === 'admin' ? (
+                <a className="disabled">编辑</a>
+              ) : (
+                <a
+                  onClick={() => {
+                    columns.cache_instance.dmRef.update(id);
+                  }}
+                >
+                  编辑
+                </a>
+              )}
+              <Divider type="vertical" />
+              {record.name === 'admin' ? (
+                <a className="disabled">删除</a>
+              ) : (
+                <Popconfirm
+                  title="是否删除？"
+                  onConfirm={() => {
                     const { remove }: any = this.dmRef;
-                    if (remove) remove(this, 'domain/remove');
-                  }}>
-                    <a>删除</a>
-                  </Popconfirm>
-                )}
-              </div>
-            );
-          },
+                    if (remove) remove(id);
+                  }}
+                >
+                  <a>删除</a>
+                </Popconfirm>
+              )}
+            </div>
+          );
         },
-      ],
-      dataSource: domain.list,
-      scroll: {
-        x: 900,
-        scrollToFirstRowOnChange: true,
-      },
-    };
+      }),
+    ];
     const tabList = tree.fetchTabList(domain.list);
 
     return (
-      <PageHeaderWrapper>
+      <div>
         <DataManager
           wrappedComponentRef={(dmRef: React.RefObject<unknown>) => {
             this.dmRef = dmRef;
           }}
-          card={{
+          instance={this}
+          loading={dataLoading}
+          table={{ columns: tableColumns, dataSource: role.list }}
+          tableContainer={{
             tabList,
+            defaultActiveTabKey: tabList[0] && tabList[0].key,
+            activeTabKey: tabKey || (tabList[0] && tabList[0].key),
             onTabChange: (key: string) => {
-              this.setState({ dataLoading: true });
-              console.log(tree.fetch(domain.list, key, 'name'));
-              rs(this, 'role/search');
+              if (dataLoading) return;
+              const value = tree.fetch(domain.list, key, 'name');
+              this.setState({ currentDomain: value.id });
+              ra(this, 'role/search', { domain: value.id }).then(() => {
+                this.setState({ tabKey: tree.fetch(tabList, value.name, 'key').key });
+              });
             },
           }}
-          table={table}
-          create={{
-            component: BizForm,
-            rsp: () => [this, 'domain/create'],
+          actions={{
+            create: {
+              type: 'role/create',
+              fc: BizForm,
+              params: { domain: currentDomain || (domain.list[0] && domain.list[0].id) },
+            },
+            update: { type: 'role/update', fc: BizForm },
+            search: { type: 'role/search' },
+            remove: { type: 'role/remove' },
           }}
-          editor={{
-            component: BizForm,
-            rsp: () => [this, 'domain/update'],
-          }}
-          actions={{}}
           {...this.props}
         />
-      </PageHeaderWrapper>
+      </div>
     );
   }
 }
 
-export default connect(({
-  domain, role
-}: ConnectState) => ({
-  role,
+export default connect(({ domain, role }: ConnectState) => ({
   domain,
+  role,
 }))(RoleIndex);

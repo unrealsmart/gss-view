@@ -1,56 +1,48 @@
 import { Effect } from 'dva';
 import { Reducer } from 'redux';
-import { TakeEffects, TakeReducers } from '@/utils/take';
-
-const url = '/main/category';
-const namespace = 'category';
+import * as server from '@/services/common';
+import { structure } from '@/utils/utils';
 
 export interface CategoryModelType {
   namespace: string;
   state: GlobalModelState;
   effects: {
-    create: Effect;
-    remove: Effect;
-    update: Effect;
-    search: Effect;
-    detail: Effect;
+    [key: string]: Effect;
   };
   reducers: {
-    [key: string]: Reducer<GlobalModelState>;
+    [key: string]: Reducer;
   };
 }
 
 const CategoryModel: CategoryModelType = {
-  namespace,
+  namespace: 'category',
 
   state: {
     args: {},
     page: {},
     list: [],
     info: {},
-    requesting: false,
   },
 
   effects: {
-    *create(action, effects) {
-      yield TakeEffects(url, action, effects);
+    *search({ payload }, { call, put }) {
+      const response = yield call(server.search, 'content/category', payload);
+      yield put({ type: 'save', mode: 'search', payload: response });
     },
-    *remove(action, effects) {
-      yield TakeEffects(url, action, effects);
+    *create({ payload }, { call, put }) {
+      const response = yield call(server.create, 'content/category', payload);
+      yield put({ type: 'save', mode: 'create', payload: response });
     },
-    *update(action, effects) {
-      yield TakeEffects(url, action, effects);
-    },
-    *search(action, effects) {
-      yield TakeEffects(url, action, effects);
-    },
-    *detail(action, effects) {
-      yield TakeEffects(url, action, effects);
+    *update({ payload }, { call, put }) {
+      const response = yield call(server.update, 'content/category', payload);
+      yield put({ type: 'save', mode: 'update', payload: response });
     },
   },
 
   reducers: {
-    TakeReducers,
+    save(state, action) {
+      return structure(state, action);
+    },
   },
 };
 

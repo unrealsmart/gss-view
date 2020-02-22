@@ -1,9 +1,7 @@
 import { Effect } from 'dva';
 import { Reducer } from 'redux';
-import { TakeEffects, TakeReducers } from '@/utils/take';
-
-const url = '/main/domain';
-const namespace = 'domain';
+import * as server from '@/services/common';
+import { structure } from '@/utils/utils';
 
 export interface DomainModelItem {
   id: number;
@@ -11,8 +9,8 @@ export interface DomainModelItem {
   title: string;
   description: string;
   status: number | string | 0;
-  create_time: number | string | '0000-00-00 00:00:00';
-  update_time: number | string | '0000-00-00 00:00:00';
+  create_time: number | string;
+  update_time: number | string;
   [key: string]: any;
 }
 
@@ -21,47 +19,51 @@ export interface DomainModelState extends GlobalModelState {
 }
 
 export interface DomainModelType {
-  namespace: string | 'default';
+  namespace: string;
   state: DomainModelState;
   effects: {
-    search: Effect;
-    create: Effect;
-    update: Effect;
-    detail: Effect;
+    [key: string]: Effect;
   };
   reducers: {
-    [key: string]: Reducer<DomainModelState>;
+    [key: string]: Reducer<any>;
   };
 }
 
 const DomainModel: DomainModelType = {
-  namespace,
+  namespace: 'domain',
 
   state: {
     args: {},
     page: {},
     list: [],
     info: {},
-    requesting: false,
   },
 
   effects: {
-    *search(action, effects) {
-      yield TakeEffects(url, action, effects);
+    *search({ payload }, { call, put }) {
+      const response = yield call(server.search, 'main/domain', payload);
+      yield put({ type: 'save', mode: 'search', payload: response });
+      return response;
     },
-    *create(action, effects) {
-      yield TakeEffects(url, action, effects);
+    *create({ payload }, { call, put }) {
+      const response = yield call(server.create, 'main/domain', payload);
+      yield put({ type: 'save', mode: 'create', payload: response });
     },
-    *update(action, effects) {
-      yield TakeEffects(url, action, effects);
+    *update({ payload }, { call, put }) {
+      yield put({ type: 'save', mode: 'update', payload: { id: payload.id, loading: true } });
+      const response = yield call(server.update, 'main/domain', payload);
+      yield put({ type: 'save', mode: 'update', payload: { ...response, loading: false } });
     },
-    *detail(action, effects) {
-      yield TakeEffects(url, action, effects);
+    *remove({ payload }, { call, put }) {
+      const response = yield call(server.remove, 'main/domain', payload);
+      if (response && !(response instanceof Response)) {
+        yield put({ type: 'save', mode: 'remove', payload });
+      }
     },
   },
 
   reducers: {
-    TakeReducers,
+    save: (state, action) => structure(state, action),
   },
 };
 

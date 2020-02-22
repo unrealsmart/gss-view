@@ -1,8 +1,7 @@
 import { Effect } from 'dva';
 import { Reducer } from 'redux';
-import isJSON from 'is-json';
-
 import { query as queryUsers } from '@/services/user';
+import { getCurrentUser } from '@/utils/storage';
 
 export interface CurrentUser {
   id?: string;
@@ -56,25 +55,20 @@ const UserModel: UserModelType = {
       });
     },
     *fetchCurrent(_, { put }) {
-      // TODO 1. 获取用户信息
-      // TODO 2. 判断过期刷新
-      const adpUser = localStorage.getItem('antd-pro-user') || '';
-      const user = isJSON(adpUser) ? JSON.parse(adpUser) : {};
-      if (!user || user === {}) {
-        // const response = yield call(queryCurrent);
-        // console.log(response);
+      const adpUser: AdministratorModel = getCurrentUser();
+      if (!adpUser || !adpUser.id) {
+        yield put({
+          type: 'login/logout',
+        });
+        return;
       }
-
-      const avatar = user.avatar
-        ? user.avatar.path
-        : 'http://pic4.zhimg.com/v2-2bec6443e2ac527d19e2aaf8660fd863_b.jpg';
 
       yield put({
         type: 'saveCurrentUser',
         payload: {
-          ...user,
-          name: user.nickname || '未设置昵称',
-          avatar,
+          ...adpUser,
+          name: adpUser.nickname || '未设置昵称',
+          avatar: typeof adpUser.avatar !== 'number' && adpUser.avatar.path,
         },
       });
     },

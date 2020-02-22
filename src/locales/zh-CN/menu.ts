@@ -52,43 +52,29 @@ export default {
   // Laboratory
   'menu.laboratory': '实验室',
   'menu.laboratory.index': '实验室首页',
+  // Blank
+  'menu.blank': '如何在空白的页面上进行开发？',
   // System
   'menu.system': '系统管理',
-  'menu.system.administrator': '用户',
-  'menu.system.administrator.index': '用户首页',
-  'menu.system.administrator.detail': '用户详情',
-  'menu.system.administrator.create': '新建用户',
-  'menu.system.administrator.editor': '编辑用户',
-  'menu.system.domain': '域组',
-  'menu.system.domain.index': '域组首页',
+  'menu.system.domain': '租域',
   'menu.system.domain.create': '新建域组',
   'menu.system.domain.editor': '编辑域组',
   'menu.system.role': '角色',
-  'menu.system.access-controls': '权限',
-  'menu.system.access-controls.index': '权限首页',
-  'menu.system.access-controls.create': '新建权限',
-  'menu.system.access-controls.editor': '编辑权限',
-  // Configure
-  'menu.configure': '所有设置',
-  'menu.configure.system': '系统设置',
-  'menu.configure.website': '网站设置',
+  'menu.system.authority': '权限',
+  'menu.system.authority.detail': '权限详情',
+  'menu.system.authority.create': '新建权限',
+  'menu.system.authority.editor': '编辑权限',
+  'menu.system.administrator': '用户',
+  'menu.system.administrator.detail': '用户详情',
+  'menu.system.administrator.create': '新建用户',
+  'menu.system.administrator.editor': '编辑用户',
+  // Config
+  'menu.config': '所有设置',
   // Content
   'menu.content': '内容管理',
-  'menu.content.article': '文章',
   'menu.content.category': '分类',
-  'menu.content.model': '模型',
+  'menu.content.aem': '模型',
   'menu.content.tag': '标签',
-  // Tools: Earn
-  'menu.earn-view': 'Earn',
-  'menu.earn-view.hotel': '酒店',
-  'menu.earn-view.hotel.index': '酒店列表',
-  'menu.earn-view.order': '订单',
-  'menu.earn-view.order.index': '订单列表',
-  'menu.earn-view.order.booking': '预定',
-  'menu.earn-view.task': '任务',
-  'menu.earn-view.task.index': '任务列表',
-  'menu.earn-view.date-price': '日期价格（临时）',
-  // Tools: WOWG
-  'menu.WOWG': '魔金趋势',
+  'menu.content.article': '文章',
   // more
 };

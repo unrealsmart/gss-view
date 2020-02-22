@@ -12,6 +12,7 @@ declare module '*.bmp';
 declare module '*.tiff';
 declare module 'omit.js';
 declare module 'is-json';
+declare module 'js-base64';
 declare module 'symbol-tree';
 declare module '@antv/data-set';
 
@@ -35,6 +36,9 @@ interface Window {
       dispatch?: any;
       [key: string]: any;
     };
+    [key: string]: any;
+  };
+  rc: {
     [key: string]: any;
   };
 }
@@ -64,22 +68,22 @@ interface AuthModelType {
 // global interface model
 interface GlobalModelState {
   args: object;
-  page: object | {
-    current: number | 1;
-    size: number | 20;
-    last: number | 0;
-    total: number | 0;
-  };
+  page:
+    | object
+    | {
+        current: number | 1;
+        size: number | 20;
+        last: number | 0;
+        total: number | 0;
+      };
   list: [];
   info: object | [];
-  requesting: boolean;
 }
 
 // global index class state
 interface GlobalClassState {
-  // 用于指示加载状态
+  // 数据加载状态
   dataLoading?: boolean;
-  //
   // more state any
   [key: string]: any;
 }

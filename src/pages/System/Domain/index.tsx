@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import rs from '@/utils/rs';
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { ConnectState } from '@/models/connect';
 import DataManager from '@/components/DataManager';
-import { Divider, Popconfirm } from 'antd';
-import { DomainModelItem } from '@/models/system/domain';
+import { Divider, Popconfirm, Switch } from 'antd';
+import { ra } from '@/utils/utils';
+import columns from '@/utils/columns';
 import BizForm from './form';
-// import BizForm from './form';
 
 interface DomainIndexProps {
   tableProps: object;
@@ -15,10 +13,10 @@ interface DomainIndexProps {
   [key: string]: any;
 }
 
-interface DomainIndexState extends GlobalClassState {}
+interface DomainState extends GlobalClassState {}
 
-class DomainIndex extends Component<DomainIndexProps, DomainIndexState> {
-  private dmRef: React.RefObject<unknown>;
+class Domain extends Component<DomainIndexProps, DomainState> {
+  protected dmRef: React.RefObject<unknown>;
 
   constructor(props: DomainIndexProps) {
     super(props);
@@ -30,120 +28,93 @@ class DomainIndex extends Component<DomainIndexProps, DomainIndexState> {
   };
 
   componentDidMount(): void {
-    rs(this, 'domain/search');
+    ra(this, 'domain/search');
   }
 
   componentWillUnmount(): void {
-    clearInterval();
-    clearTimeout();
     this.setState = () => {};
   }
 
   render(): React.ReactNode {
+    columns.instance(this);
     const { domain } = this.props;
     const { dataLoading } = this.state;
-    const table = {
-      loading: dataLoading,
-      columns: [
-        {
-          title: 'ID',
-          dataIndex: 'id',
-          width: 65,
+    const tableColumns = [
+      columns.id(),
+      columns.name({ width: 150 }),
+      columns.title(),
+      columns.description(),
+      columns.datetime(),
+      columns.status({
+        render: (text: number, record: any) => (
+          <Switch
+            checked={!!text}
+            size="small"
+            disabled={record.name === 'main'}
+            loading={record.loading}
+            onClick={(checked: boolean) => {
+              ra(this, 'domain/update', { id: record.id, status: checked ? 1 : 0 });
+            }}
+          />
+        ),
+      }),
+      columns.actions({
+        render: (_: void, record: any) => {
+          const { id = 0 } = record;
+          return (
+            <div>
+              {record.name === 'main' ? (
+                <a className="disabled">编辑</a>
+              ) : (
+                <a
+                  onClick={() => {
+                    columns.cache_instance.dmRef.update(id);
+                  }}
+                >
+                  编辑
+                </a>
+              )}
+              <Divider type="vertical" />
+              {record.name === 'main' ? (
+                <a className="disabled">删除</a>
+              ) : (
+                <Popconfirm
+                  title="是否删除？"
+                  onConfirm={() => {
+                    columns.cache_instance.dmRef.remove(id);
+                  }}
+                >
+                  <a>删除</a>
+                </Popconfirm>
+              )}
+            </div>
+          );
         },
-        {
-          title: '标题',
-          dataIndex: 'title',
-          width: 120,
-        },
-        {
-          title: '描述',
-          dataIndex: 'description',
-        },
-        {
-          title: '日期',
-          dataIndex: 'datetime',
-          width: 140,
-          render: (_: string, record: any) => (
-            <>
-              <div style={{ color: '#ccc' }}>{record.create_time || 'NULL'}</div>
-              <div>{record.update_time || 'NULL'}</div>
-            </>
-          ),
-        },
-        {
-          title: '状态',
-          dataIndex: 'status',
-          align: 'center' as const,
-          width: 65,
-          show: false,
-          render: (text: any) => <div>{text}</div>,
-        },
-        {
-          title: '操作',
-          dataIndex: 'action',
-          width: 140,
-          fixed: 'right',
-          render: (_: void, record: DomainModelItem) => {
-            const { id = 0 } = record;
-            return (
-              <div>
-                {record.name === 'main' ? (
-                  <a className="disabled">编辑</a>
-                ) : (
-                  <a onClick={() => {
-                    const { editor }: any = this.dmRef;
-                    if (editor) editor(id);
-                  }}>
-                    编辑
-                  </a>
-                )}
-                <Divider type="vertical" />
-                {record.name === 'main' ? (
-                  <a className="disabled">删除</a>
-                ) : (
-                  <Popconfirm title="是否删除？" onConfirm={() => {
-                    const { remove }: any = this.dmRef;
-                    if (remove) remove(this, 'domain/remove');
-                  }}>
-                    <a>删除</a>
-                  </Popconfirm>
-                )}
-              </div>
-            );
-          },
-        },
-      ],
-      dataSource: domain.list,
-      scroll: {
-        x: 900,
-        scrollToFirstRowOnChange: true,
-      },
-    };
+      }),
+    ];
 
     return (
-      <PageHeaderWrapper>
+      <div>
         <DataManager
           wrappedComponentRef={(dmRef: React.RefObject<unknown>) => {
             this.dmRef = dmRef;
           }}
-          table={table}
-          create={{
-            component: BizForm,
-            rsp: () => [this, 'domain/create'],
+          instance={this}
+          table={{ columns: tableColumns, dataSource: domain.list }}
+          loading={dataLoading}
+          actions={{
+            create: { type: 'domain/create', fc: BizForm },
+            update: { type: 'domain/update', fc: BizForm },
+            search: { type: 'domain/search' },
+            remove: { type: 'domain/remove' },
           }}
-          editor={{
-            component: BizForm,
-            rsp: () => [this, 'domain/update'],
-          }}
-          actions={{}}
           {...this.props}
         />
-      </PageHeaderWrapper>
+      </div>
     );
   }
 }
 
 export default connect(({ domain }: ConnectState) => ({
-  // class model item
   domain,
-}))(DomainIndex);
+}))(Domain);

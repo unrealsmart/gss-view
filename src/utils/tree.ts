@@ -1,7 +1,6 @@
-import { TreeNode } from "antd/lib/tree-select";
+import { TreeNode } from 'antd/lib/tree-select';
 
-
-function initialize(data = [], keyFor: string = 'id') {
+function initialize(data: any[] = [], keyFor: string = 'id') {
   return data.map((item: object) => {
     let newItem: object = item;
     if (item && item[keyFor]) {
@@ -14,12 +13,12 @@ function initialize(data = [], keyFor: string = 'id') {
   });
 }
 
-function simple(data = [], keyFor: string = 'id'): TreeNode[] {
+function simple(data: any[] = [], keyFor: string = 'id'): TreeNode[] {
   const newData: TreeNode[] = [];
-  data.forEach((item?: { title?: string; name?: string; }) => {
+  data.forEach((item?: { title?: string; name?: string }) => {
     if (item && item[keyFor]) {
       newData.push({
-        key: item[keyFor],
+        key: item.name || item[keyFor],
         value: item[keyFor],
         title: item.title || item.name || item[keyFor].toString(),
       });
@@ -28,7 +27,7 @@ function simple(data = [], keyFor: string = 'id'): TreeNode[] {
   return newData;
 }
 
-function parent(data = [], keyFor: string = 'id'): TreeNode[] {
+function parent(data: any[] = [], keyFor: string = 'id'): TreeNode[] {
   const newData = simple(data, keyFor);
   newData.unshift({
     key: 0,
@@ -38,17 +37,17 @@ function parent(data = [], keyFor: string = 'id'): TreeNode[] {
   return newData;
 }
 
-function fetch(data = [], value: string, key: string = 'id') {
+function fetch(data: any[] = [], value: number | string, key: string = 'id'): any {
   let objective = {};
   data.forEach((item: object) => {
-    if (item[key] === value) {
+    if (String(item[key]) === String(value)) {
       objective = item;
     }
   });
   return objective;
 }
 
-function insert(data = [], value: any, modeOrFunc: string | Function) {
+function insert(data: any[] = [], value: any, modeOrFunc: string | Function) {
   const newData: any[] = data;
   // Tree
   // data.map((item: object) => {
@@ -68,13 +67,13 @@ function insert(data = [], value: any, modeOrFunc: string | Function) {
   return newData;
 }
 
-function update(data = [], value: any, key = 'id') {
+function update(data: any[] = [], value: any, key = 'id') {
   const newData = data.map((item: object) => {
     if (String(item[key]) === String(value[key])) {
       return {
         ...item,
         ...value,
-      }
+      };
     }
     return item;
   });
@@ -82,14 +81,13 @@ function update(data = [], value: any, key = 'id') {
   return newData;
 }
 
-function remove(data = [], value: any, key = 'id') {
-  const newData = data.map((item: object) => {
-    if (String(item[key]) === String(value[key])) {
-      return undefined;
+function remove(data: any[] = [], value: any, key = 'id') {
+  const newData: any[] = [];
+  data.forEach((item: object) => {
+    if (String(item[key]) !== String(value[key])) {
+      newData.push(item);
     }
-    return item;
   });
-
   return newData;
 }
 
@@ -101,14 +99,11 @@ function remove(data = [], value: any, key = 'id') {
  */
 function fetchTabList(data = [], array: string[] = ['name', 'title']): any {
   const [key, tab] = array;
-  return data.map((item: object) => {
-    return {
-      key: item[key],
-      tab: item[tab],
-    };
-  })
+  return data.map((item: object) => ({
+    key: item[key],
+    tab: item[tab],
+  }));
 }
-
 
 export default {
   // 初始化（添加键 & 标记叶子节点）
@@ -128,6 +123,5 @@ export default {
   remove,
 
   // 特殊方法
-
   fetchTabList,
 };

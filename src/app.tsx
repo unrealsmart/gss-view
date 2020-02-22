@@ -2,41 +2,23 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import request from '@/utils/request';
 import Termination from '@/components/Termination';
-import isJSON from 'is-json';
-import { checkLoginToken } from '@/utils/utils';
+import { fullScreenLoading } from '@/utils/utils';
+// import isJSON from 'is-json';
+// import { getToken } from '@/utils/storage';
 
-function fetchADPConfig(oldRender: Function): void {
-  request('/main/all-config/adp').then(data => {
-    if (data) {
-      localStorage.setItem('all-config-adp', JSON.stringify(data));
-      oldRender();
-      // const timer = setInterval(() => {
-      //   const section = document.querySelector('.ant-pro-grid-content');
-      //   console.log(section);
-      //   if (section) {
-      //     ReactDOM.render(<></>, document.getElementById('loading'));
-      //     clearInterval(timer);
-      //   }
-      // }, 1000);
-    } else {
-      ReactDOM.render(<Termination error={data} />, document.getElementById('root'));
-    }
-  });
-}
-
-export function onRouteChange({ location }: any) {
-  const adpToken = localStorage.getItem('antd-pro-token') || '';
-  const token = isJSON(adpToken) ? JSON.parse(adpToken) : {};
-  checkLoginToken(token, location.pathname);
-}
+// export function onRouteChange({ location }: any) {
+//   const adpToken = getToken();
+//   const token = isJSON(adpToken) ? JSON.parse(adpToken) : {};
+//   checkToken(token, location.pathname);
+// }
 
 export function render(oldRender: Function): void {
-  request('/main/ping').then(data => {
-    ReactDOM.render(<></>, document.getElementById('loading'));
-    if (data instanceof Response) {
-      ReactDOM.render(<Termination error={data} />, document.getElementById('root'));
-    } else {
-      fetchADPConfig(oldRender);
+  request('main/config/adp').then(data => {
+    if (data instanceof Response && !data.ok) {
+      fullScreenLoading('leave');
+      ReactDOM.render(<Termination response={data} />, document.getElementById('root'));
+      return;
     }
+    oldRender();
   });
 }
