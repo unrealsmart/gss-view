@@ -2,13 +2,14 @@ import { IConfig, IPlugin } from 'umi-types';
 import defaultSettings from './defaultSettings'; // https://umijs.org/config/
 import slash from 'slash2';
 import themePluginConfig from './themePluginConfig';
+import proxy from './proxy';
+import webpackPlugin from './plugin.config';
 
 const { pwa } = defaultSettings;
-const serverUrl = 'http://gss.com/';
 
 // preview.pro.ant.design only do not use in your production ;
 // preview.pro.ant.design 专用环境变量，请不要在你的项目中使用它。
-const { ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION } = process.env;
+const { ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION, REACT_APP_ENV } = process.env;
 const isAntDesignProPreview = ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION === 'site';
 
 const plugins: IPlugin[] = [
@@ -40,7 +41,8 @@ const plugins: IPlugin[] = [
               importWorkboxFrom: 'local',
             },
           }
-        : false, // default close dll, because issue https://github.com/ant-design/ant-design-pro/issues/4665
+        : false,
+      // default close dll, because issue https://github.com/ant-design/ant-design-pro/issues/4665
       // dll features https://webpack.js.org/plugins/dll-plugin/
       // dll: {
       //   include: ['dva', 'dva/router', 'dva/saga', 'dva/fetch'],
@@ -302,6 +304,7 @@ export default {
     'font-size-base': '12px',
   },
   define: {
+    REACT_APP_ENV: REACT_APP_ENV || false,
     ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION:
       ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION || '', // preview.pro.ant.design only do not use in your production ; preview.pro.ant.design 专用环境变量，请不要在你的项目中使用它。
   },
@@ -326,9 +329,7 @@ export default {
       ) {
         return localName;
       }
-
       const match = context.resourcePath.match(/src(.*)/);
-
       if (match && match[1]) {
         const antdProPath = match[1].replace('.less', '');
         const arr = slash(antdProPath)
@@ -337,26 +338,14 @@ export default {
           .map((a: string) => a.toLowerCase());
         return `antd-pro${arr.join('-')}-${localName}`.replace(/--/g, '-');
       }
-
       return localName;
     },
   },
   manifest: {
     basePath: '/',
   },
-  // chainWebpack: webpackPlugin,
-  proxy: {
-    '/ss/': {
-      target: serverUrl,
-      changeOrigin: true,
-      pathRewrite: { '^/ss': '' },
-    },
-    '/sr/': {
-      target: serverUrl,
-      changeOrigin: true,
-      pathRewrite: { '^/sr': '/storage' },
-    },
-  },
+  proxy: proxy[REACT_APP_ENV || 'dev'],
+  chainWebpack: webpackPlugin,
   runtimePublicPath: true,
   publicPath: '/admin/',
   treeShaking: true,
