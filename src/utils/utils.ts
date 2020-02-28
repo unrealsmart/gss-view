@@ -77,40 +77,43 @@ export function fullScreenLoading(action: 'appear' | 'leave') {
   }
 }
 
-// 请求代理
-export function ra(
-  that: ComponentProps<any>,
-  type: string,
-  payload?: object | object[],
-  callback?: Function,
-): any {
-  // 设置数据加载状态（仅在搜索时自动设置）
-  const typeArray = type.split('/');
-  if (typeArray[typeArray.length - 1] === 'search') {
-    that.setState({ dataLoading: true });
-  }
+//
+export const rss = {
+  // 存储调用类
+  $instance: undefined,
+  // 实例化
+  instance: (that: ComponentProps<any>) => {
+    const {
+      props = {},
+      props: { dispatch },
+    } = that;
+    if (JSON.stringify(props) === '{}' || !dispatch) throw new Error('props or dispatch error.');
+    rss.$instance = that;
+    return rss;
+  },
+  //
+};
 
+// 请求代理
+export function ra(that: ComponentProps<any>, type: string, payload: object = {}): Promise<any> {
   // 判断调用函数是否正常
-  const { dispatch } = that.props;
-  if (!dispatch) {
-    console.error('dispatch is undefined');
-    return undefined;
-  }
+  if (!that.props || !that.props.dispatch) throw new Error('response error');
+  // 设置数据加载状态（仅在搜索时自动设置）
+  const actionName = type.split('/').reverse()[0];
+  that.setState({ dataLoading: actionName === 'search' });
   // 发送调用请求
-  // const { createMode = 'push', ...newPayload }: any = payload;
-  const response = dispatch({ type, payload });
+  const { createMode = 'push', ...newPayload }: any = payload;
+  const { dispatch } = that.props;
+  const response = dispatch({ type, payload: newPayload, createMode });
   // 处理请求异常
   if (!response || !response.then) {
-    console.warn('response or response then is undefined');
+    // todo message.error
     that.setState({ dataLoading: false });
-    return undefined;
+    throw new Error('response error');
   }
   // 请求结束，设置加载状态
   response.finally(() => {
-    that.setState({ dataLoading: false });
-  });
-  response.then((data: any) => {
-    if (callback) callback(data);
+    if (that.state.dataLoading) that.setState({ dataLoading: false });
   });
   return response;
 }

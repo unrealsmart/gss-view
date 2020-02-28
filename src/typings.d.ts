@@ -69,7 +69,9 @@ interface AuthModelType {
 
 // global interface model
 interface GlobalModelState {
+  // 请求参数（一般用于重载请求、删除数据时从本地移除做参考数据，例如：{ id : 1 }）
   args: object;
+  // 分页参数（一般用于具有分页参数的数据，之后可通过本地组件调整分页器）
   page:
     | object
     | {
@@ -78,13 +80,15 @@ interface GlobalModelState {
         last: number | 0;
         total: number | 0;
       };
+  // 数据列表（无论是否具备分页参数，经过处理的数据都将会覆盖到此参数）
   list: [];
+  // 详情数据（一般仅适用于单独的数据读取）
   info: object | [];
 }
 
 // global index class state
 interface GlobalClassState {
-  // 数据加载状态
+  // 请求状态
   dataLoading?: boolean;
   // more state any
   [key: string]: any;

@@ -7,10 +7,20 @@
  */
 export default {
   dev: {
-    '/api/': {
-      target: 'https://preview.pro.ant.design',
+    // '/api/': {
+    //   target: 'https://preview.pro.ant.design',
+    //   changeOrigin: true,
+    //   pathRewrite: { '^': '' },
+    // },
+    '/ss/': {
+      target: 'http://gss.com',
       changeOrigin: true,
-      pathRewrite: { '^': '' },
+      pathRewrite: { '^/ss': '' },
+    },
+    '/sr/': {
+      target: 'http://gss.com',
+      changeOrigin: true,
+      pathRewrite: { '^/sr': '/storage' },
     },
   },
   test: {

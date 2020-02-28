@@ -4,7 +4,7 @@ import { ConnectState } from '@/models/connect';
 import DataManager from '@/components/DataManager';
 import { Divider, Popconfirm, Switch } from 'antd';
 import tree from '@/utils/tree';
-import { ra } from '@/utils/entrust';
+import { ra, rss } from '@/utils/utils';
 import columns from '@/utils/columns';
 import BizForm from './form';
 
@@ -24,6 +24,7 @@ class RoleIndex extends Component<RoleIndexProps, RoleIndexState> {
   constructor(props: RoleIndexProps) {
     super(props);
     this.dmRef = React.createRef();
+    columns.instance(this);
   }
 
   state = {
@@ -33,17 +34,19 @@ class RoleIndex extends Component<RoleIndexProps, RoleIndexState> {
   };
 
   componentDidMount(): void {
-    ra(this, 'domain/search');
+    const rit = rss.instance(this);
+    console.log(rit);
+
+    // ra(this, 'domain/search').then((domain: any) => {
+    //   ra(this, 'role/search', { id: domain[0] && domain[0].id })
+    // });
   }
 
   componentWillUnmount(): void {
-    // clearInterval();
-    // clearTimeout();
-    // this.setState = () => {};
+    this.setState = () => {};
   }
 
   render(): React.ReactNode {
-    columns.instance(this);
     const { domain, role } = this.props;
     const { dataLoading, tabKey, currentDomain } = this.state;
     const tableColumns = [
