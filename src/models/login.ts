@@ -73,7 +73,6 @@ const Model: LoginModelType = {
         router.replace(redirect || '/');
       }
     },
-
     logout() {
       const { redirect } = getPageQuery();
       // Note: There may be security issues, please note
