@@ -1,5 +1,6 @@
 import { IConfig, IPlugin } from 'umi-types';
 import defaultSettings from './defaultSettings'; // https://umijs.org/config/
+
 import slash from 'slash2';
 import themePluginConfig from './themePluginConfig';
 import proxy from './proxy';
@@ -11,7 +12,6 @@ const { pwa } = defaultSettings;
 // preview.pro.ant.design 专用环境变量，请不要在你的项目中使用它。
 const { ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION, REACT_APP_ENV } = process.env;
 const isAntDesignProPreview = ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION === 'site';
-
 const plugins: IPlugin[] = [
   ['umi-plugin-antd-icon-config', {}],
   [
@@ -59,33 +59,6 @@ const plugins: IPlugin[] = [
       autoAddMenu: true,
     },
   ],
-  // umi plugin antd theme
-  // [
-  //   'umi-plugin-antd-theme',
-  //   {
-  //     theme: [
-  //       {
-  //         fileName: 'dark.css',
-  //         key:'dark',
-  //         modifyVars: {
-  //           '@primary-color': '#4992BF',
-  //           '@menu-color': '#9B9B9B',
-  //           '@menu-bg': '#3A3A3A',
-  //         },
-  //       },
-  //     ],
-  //     // 是否压缩css
-  //     min: true,
-  //     // css module
-  //     isModule: true,
-  //     // 忽略 antd 的依赖
-  //     ignoreAntd: false,
-  //     // 忽略 pro-layout
-  //     ignoreProLayout: false,
-  //     // 不使用缓存
-  //     cache: true,
-  //   }
-  // ],
 ];
 
 if (isAntDesignProPreview) {
@@ -96,6 +69,14 @@ if (isAntDesignProPreview) {
       code: 'UA-72788897-6',
     },
   ]);
+
+  plugins.push([
+    'umi-plugin-pro',
+    {
+      serverUrl: 'https://us-central1-antd-pro.cloudfunctions.net/api',
+    },
+  ]);
+
   plugins.push(['umi-plugin-antd-theme', themePluginConfig]);
 }
 
@@ -315,6 +296,7 @@ export default {
   // Theme for antd: https://ant.design/docs/react/customize-theme-cn
   theme: {
     // ...darkTheme,
+    'primary-color': defaultSettings.primaryColor,
     'font-size-base': '12px',
   },
   define: {
