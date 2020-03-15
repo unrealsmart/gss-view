@@ -138,12 +138,6 @@ export default {
                 },
               ],
             },
-            // {
-            //   path: '/config',
-            //   name: 'config',
-            //   icon: 'control',
-            //   component: './Config/index',
-            // },
             {
               path: '/system',
               name: 'system',
@@ -167,103 +161,8 @@ export default {
                     },
                   ],
                 },
-                {
-                  path: '/system/role',
-                  name: 'role',
-                  routes: [
-                    {
-                      path: '/system/role',
-                      redirect: '/system/role/index',
-                    },
-                    {
-                      path: '/system/role/index',
-                      component: './System/Role',
-                    },
-                  ],
-                },
-                // {
-                //   path: '/system/authority',
-                //   name: 'authority',
-                //   routes: [
-                //     {
-                //       path: '/system/authority',
-                //       redirect: '/system/authority/index',
-                //     },
-                //     {
-                //       path: '/system/authority/index',
-                //       component: './System/Authority',
-                //     },
-                //   ],
-                // },
-                {
-                  path: '/system/administrator',
-                  name: 'administrator',
-                  routes: [
-                    {
-                      path: '/system/administrator',
-                      redirect: '/system/administrator/index',
-                    },
-                    {
-                      path: '/system/administrator/index',
-                      component: './System/Administrator',
-                    },
-                    {
-                      path: '/system/administrator/detail',
-                      component: './System/Administrator/detail',
-                    },
-                  ],
-                },
               ],
             },
-            // {
-            //   path: '/content',
-            //   name: 'content',
-            //   icon: 'book',
-            //   routes: [
-            //     {
-            //       path: '/content',
-            //       redirect: '/content/category/index',
-            //     },
-            //     {
-            //       path: '/content/category',
-            //       name: 'category',
-            //       routes: [
-            //         {
-            //           path: '/content/category',
-            //           redirect: '/content/category/index',
-            //         },
-            //         {
-            //           path: '/content/category/index',
-            //           component: './Content/Category/index',
-            //         },
-            //       ],
-            //     },
-            //     {
-            //       path: '/content/tag/index',
-            //       name: 'tag',
-            //       component: './Content/Tag/index',
-            //     },
-            //     {
-            //       path: '/content/aem/index',
-            //       name: 'aem',
-            //       component: './Content/Aem/index',
-            //     },
-            //     {
-            //       path: '/content/article',
-            //       name: 'article',
-            //       routes: [
-            //         {
-            //           path: '/content/article',
-            //           redirect: '/content/article/index',
-            //         },
-            //         {
-            //           path: '/content/article/index',
-            //           component: './Content/Article/index',
-            //         },
-            //       ],
-            //     },
-            //   ],
-            // },
             {
               component: './404',
             },
