@@ -1,7 +1,7 @@
 import React, { Component, ComponentProps } from 'react';
-import { Form, Card, Table, Row, Col, Button, Modal, Divider } from 'antd';
+import { Card, Table, Row, Col, Button, Modal, Divider } from 'antd';
 import { TableProps } from 'antd/es/table';
-import { FormComponentProps } from 'antd/es/form';
+import { FormProps } from 'antd/es/form';
 import { CardProps } from 'antd/es/card';
 import ColumnVisible from '@/components/DataManager/ColumnVisible';
 import isJSON from 'is-json';
@@ -20,7 +20,7 @@ type Actions =
     }
   | Function;
 
-interface DataManagerProps extends Component, FormComponentProps {
+interface DataManagerProps extends Component, FormProps {
   // 使用者实例
   instance: ComponentProps<any>;
 
@@ -247,9 +247,9 @@ class DataManager extends Component<DataManagerProps, DataManagerState> {
     const tableElement = (
       <Card bordered={false} style={{ marginBottom: 24 }} {...tableContainer}>
         {this.existSubComponents() && (
-          <Row type="flex" justify="space-between" style={{ marginBottom: 12 }}>
+          <Row justify="space-between" style={{ marginBottom: 12 }}>
             <Col style={{ marginBottom: 12 }}>
-              <Row type="flex" gutter={12}>
+              <Row gutter={12}>
                 <Col>
                   <ColumnVisible
                     columns={dataColumns}
@@ -272,7 +272,7 @@ class DataManager extends Component<DataManagerProps, DataManagerState> {
               </Row>
             </Col>
             <Col style={{ marginBottom: 12 }}>
-              <Row type="flex" gutter={12}>
+              <Row gutter={12}>
                 <Col>
                   <Button icon="setting" disabled />
                 </Col>
@@ -304,7 +304,7 @@ class DataManager extends Component<DataManagerProps, DataManagerState> {
 
     const cardElement = (
       <div className={styles.cardView}>
-        <Row type="flex" gutter={12}>
+        <Row gutter={12}>
           <Col style={{ marginBottom: 12 }}>
             <Card>卡片模式具有更多配置</Card>
           </Col>
@@ -338,7 +338,4 @@ class DataManager extends Component<DataManagerProps, DataManagerState> {
   }
 }
 
-export default Form.create<DataManagerProps>()(DataManager);
-// export default connect(() => ({
-//   //
-// }))(Form.create<DataManagerProps>()(DataManager));
+export default DataManager;

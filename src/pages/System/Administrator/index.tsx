@@ -162,6 +162,7 @@ class AdministratorIndex extends Component<AdministratorIndexProps, Administrato
 
     return (
       <div>
+        {/*
         <DataManager
           wrappedComponentRef={(dmRef: React.RefObject<unknown>) => {
             this.dmRef = dmRef;
@@ -176,6 +177,7 @@ class AdministratorIndex extends Component<AdministratorIndexProps, Administrato
           beforeElement={<div>在头部添加上一些内容</div>}
           {...this.props}
         />
+        */}
       </div>
     );
   }

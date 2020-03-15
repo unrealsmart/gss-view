@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import { Avatar, Card, Col, Row, Statistic, Icon, Spin } from 'antd';
+import { Avatar, Card, Col, Row, Statistic, Spin } from 'antd';
+import { LikeOutlined } from '@ant-design/icons/lib';
 import { ConnectProps, ConnectState } from '@/models/connect';
 import { CurrentUser } from '@/models/user';
 import BizIcon from '@/components/BizIcon';
@@ -58,7 +59,7 @@ class AdministratorDetail extends Component<AdministratorDetailProps, Administra
         <Spin spinning={dataLoading}>
           <Card bordered={false} className={styles.container}>
             <div className={styles.topBackground} />
-            <Row type="flex" gutter={32}>
+            <Row gutter={32}>
               <Col>
                 <Avatar
                   size={128}
@@ -93,9 +94,9 @@ class AdministratorDetail extends Component<AdministratorDetailProps, Administra
                 </div>
               </Col>
               <Col xs={24} md={12}>
-                <Row type="flex" gutter={64} align="middle" style={{ height: '100%' }}>
+                <Row gutter={64} align="middle" style={{ height: '100%' }}>
                   <Col>
-                    <Statistic title="已获赞" value={1128} prefix={<Icon type="like" />} />
+                    <Statistic title="已获赞" value={1128} prefix={<LikeOutlined />} />
                   </Col>
                   <Col>
                     <Statistic title="已发布文章" value={81128} />

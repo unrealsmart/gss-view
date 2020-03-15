@@ -1,5 +1,3 @@
-import { TreeNode } from 'antd/lib/tree-select';
-
 function initialize(data: any[] = [], keyFor: string = 'id') {
   return data.map((item: object) => {
     let newItem: object = item;
@@ -13,8 +11,8 @@ function initialize(data: any[] = [], keyFor: string = 'id') {
   });
 }
 
-function simple(data: any[] = [], keyFor: string = 'id'): TreeNode[] {
-  const newData: TreeNode[] = [];
+function simple(data: any[] = [], keyFor: string = 'id'): any[] {
+  const newData: any[] = [];
   data.forEach((item?: { title?: string; name?: string }) => {
     if (item && item[keyFor]) {
       newData.push({
@@ -27,7 +25,7 @@ function simple(data: any[] = [], keyFor: string = 'id'): TreeNode[] {
   return newData;
 }
 
-function parent(data: any[] = [], keyFor: string = 'id'): TreeNode[] {
+function parent(data: any[] = [], keyFor: string = 'id'): any[] {
   const newData = simple(data, keyFor);
   newData.unshift({
     key: 0,

@@ -89,205 +89,191 @@ export default {
   // umi routes: https://umijs.org/zh/guide/router.html
   routes: [
     {
-      path: '/',
-      component: '../layouts/BlankLayout',
-      routes: [
-        {
-          path: '/',
-          redirect: '/index',
-        },
-        {
-          path: '/index',
-          component: './If/index',
-        },
-      ],
-    },
-    {
       path: '/login',
       component: './Login',
     },
-    // {
-    //   path: '/',
-    //   component: '../layouts/SecurityLayout',
-    //   authority: ['admin'],
-    //   routes: [
-    //     {
-    //       path: '/blank',
-    //       component: '../layouts/BlankLayout',
-    //       routes: [
-    //         {
-    //           path: '/blank',
-    //           component: './dev',
-    //         },
-    //       ],
-    //     },
-    //     {
-    //       path: '/',
-    //       component: '../layouts/BasicLayout',
-    //       authority: ['admin'],
-    //       routes: [
-    //         {
-    //           path: '/',
-    //           redirect: '/welcome',
-    //         },
-    //         {
-    //           path: '/welcome',
-    //           name: 'welcome',
-    //           icon: 'smile',
-    //           component: './Welcome',
-    //         },
-    //         {
-    //           path: '/admin',
-    //           name: 'admin',
-    //           icon: 'crown',
-    //           component: './Admin',
-    //           authority: ['admin'],
-    //           routes: [
-    //             {
-    //               path: '/admin/sub-page',
-    //               name: 'sub-page',
-    //               icon: 'smile',
-    //               component: './Welcome',
-    //               authority: ['admin'],
-    //             },
-    //           ],
-    //         },
-    //         // {
-    //         //   path: '/config',
-    //         //   name: 'config',
-    //         //   icon: 'control',
-    //         //   component: './Config/index',
-    //         // },
-    //         {
-    //           path: '/system',
-    //           name: 'system',
-    //           icon: 'crown',
-    //           routes: [
-    //             {
-    //               path: '/system',
-    //               redirect: '/system/domain/index',
-    //             },
-    //             {
-    //               path: '/system/domain',
-    //               name: 'domain',
-    //               routes: [
-    //                 {
-    //                   path: '/system/domain',
-    //                   redirect: '/system/domain/index',
-    //                 },
-    //                 {
-    //                   path: '/system/domain/index',
-    //                   component: './System/Domain',
-    //                 },
-    //               ],
-    //             },
-    //             {
-    //               path: '/system/role',
-    //               name: 'role',
-    //               routes: [
-    //                 {
-    //                   path: '/system/role',
-    //                   redirect: '/system/role/index',
-    //                 },
-    //                 {
-    //                   path: '/system/role/index',
-    //                   component: './System/Role',
-    //                 },
-    //               ],
-    //             },
-    //             // {
-    //             //   path: '/system/authority',
-    //             //   name: 'authority',
-    //             //   routes: [
-    //             //     {
-    //             //       path: '/system/authority',
-    //             //       redirect: '/system/authority/index',
-    //             //     },
-    //             //     {
-    //             //       path: '/system/authority/index',
-    //             //       component: './System/Authority',
-    //             //     },
-    //             //   ],
-    //             // },
-    //             {
-    //               path: '/system/administrator',
-    //               name: 'administrator',
-    //               routes: [
-    //                 {
-    //                   path: '/system/administrator',
-    //                   redirect: '/system/administrator/index',
-    //                 },
-    //                 {
-    //                   path: '/system/administrator/index',
-    //                   component: './System/Administrator',
-    //                 },
-    //                 {
-    //                   path: '/system/administrator/detail',
-    //                   component: './System/Administrator/detail',
-    //                 },
-    //               ],
-    //             },
-    //           ],
-    //         },
-    //         // {
-    //         //   path: '/content',
-    //         //   name: 'content',
-    //         //   icon: 'book',
-    //         //   routes: [
-    //         //     {
-    //         //       path: '/content',
-    //         //       redirect: '/content/category/index',
-    //         //     },
-    //         //     {
-    //         //       path: '/content/category',
-    //         //       name: 'category',
-    //         //       routes: [
-    //         //         {
-    //         //           path: '/content/category',
-    //         //           redirect: '/content/category/index',
-    //         //         },
-    //         //         {
-    //         //           path: '/content/category/index',
-    //         //           component: './Content/Category/index',
-    //         //         },
-    //         //       ],
-    //         //     },
-    //         //     {
-    //         //       path: '/content/tag/index',
-    //         //       name: 'tag',
-    //         //       component: './Content/Tag/index',
-    //         //     },
-    //         //     {
-    //         //       path: '/content/aem/index',
-    //         //       name: 'aem',
-    //         //       component: './Content/Aem/index',
-    //         //     },
-    //         //     {
-    //         //       path: '/content/article',
-    //         //       name: 'article',
-    //         //       routes: [
-    //         //         {
-    //         //           path: '/content/article',
-    //         //           redirect: '/content/article/index',
-    //         //         },
-    //         //         {
-    //         //           path: '/content/article/index',
-    //         //           component: './Content/Article/index',
-    //         //         },
-    //         //       ],
-    //         //     },
-    //         //   ],
-    //         // },
-    //         {
-    //           component: './404',
-    //         },
-    //       ],
-    //     },
-    //     {
-    //       component: './404',
-    //     },
-    //   ],
-    // },
+    {
+      path: '/',
+      component: '../layouts/SecurityLayout',
+      authority: ['admin'],
+      routes: [
+        {
+          path: '/blank',
+          component: '../layouts/BlankLayout',
+          routes: [
+            {
+              path: '/blank',
+              component: './dev',
+            },
+          ],
+        },
+        {
+          path: '/',
+          component: '../layouts/BasicLayout',
+          authority: ['admin'],
+          routes: [
+            {
+              path: '/',
+              redirect: '/welcome',
+            },
+            {
+              path: '/welcome',
+              name: 'welcome',
+              icon: 'smile',
+              component: './Welcome',
+            },
+            {
+              path: '/admin',
+              name: 'admin',
+              icon: 'crown',
+              component: './Admin',
+              authority: ['admin'],
+              routes: [
+                {
+                  path: '/admin/sub-page',
+                  name: 'sub-page',
+                  icon: 'smile',
+                  component: './Welcome',
+                  authority: ['admin'],
+                },
+              ],
+            },
+            // {
+            //   path: '/config',
+            //   name: 'config',
+            //   icon: 'control',
+            //   component: './Config/index',
+            // },
+            {
+              path: '/system',
+              name: 'system',
+              icon: 'crown',
+              routes: [
+                {
+                  path: '/system',
+                  redirect: '/system/domain/index',
+                },
+                {
+                  path: '/system/domain',
+                  name: 'domain',
+                  routes: [
+                    {
+                      path: '/system/domain',
+                      redirect: '/system/domain/index',
+                    },
+                    {
+                      path: '/system/domain/index',
+                      component: './System/Domain',
+                    },
+                  ],
+                },
+                {
+                  path: '/system/role',
+                  name: 'role',
+                  routes: [
+                    {
+                      path: '/system/role',
+                      redirect: '/system/role/index',
+                    },
+                    {
+                      path: '/system/role/index',
+                      component: './System/Role',
+                    },
+                  ],
+                },
+                // {
+                //   path: '/system/authority',
+                //   name: 'authority',
+                //   routes: [
+                //     {
+                //       path: '/system/authority',
+                //       redirect: '/system/authority/index',
+                //     },
+                //     {
+                //       path: '/system/authority/index',
+                //       component: './System/Authority',
+                //     },
+                //   ],
+                // },
+                {
+                  path: '/system/administrator',
+                  name: 'administrator',
+                  routes: [
+                    {
+                      path: '/system/administrator',
+                      redirect: '/system/administrator/index',
+                    },
+                    {
+                      path: '/system/administrator/index',
+                      component: './System/Administrator',
+                    },
+                    {
+                      path: '/system/administrator/detail',
+                      component: './System/Administrator/detail',
+                    },
+                  ],
+                },
+              ],
+            },
+            // {
+            //   path: '/content',
+            //   name: 'content',
+            //   icon: 'book',
+            //   routes: [
+            //     {
+            //       path: '/content',
+            //       redirect: '/content/category/index',
+            //     },
+            //     {
+            //       path: '/content/category',
+            //       name: 'category',
+            //       routes: [
+            //         {
+            //           path: '/content/category',
+            //           redirect: '/content/category/index',
+            //         },
+            //         {
+            //           path: '/content/category/index',
+            //           component: './Content/Category/index',
+            //         },
+            //       ],
+            //     },
+            //     {
+            //       path: '/content/tag/index',
+            //       name: 'tag',
+            //       component: './Content/Tag/index',
+            //     },
+            //     {
+            //       path: '/content/aem/index',
+            //       name: 'aem',
+            //       component: './Content/Aem/index',
+            //     },
+            //     {
+            //       path: '/content/article',
+            //       name: 'article',
+            //       routes: [
+            //         {
+            //           path: '/content/article',
+            //           redirect: '/content/article/index',
+            //         },
+            //         {
+            //           path: '/content/article/index',
+            //           component: './Content/Article/index',
+            //         },
+            //       ],
+            //     },
+            //   ],
+            // },
+            {
+              component: './404',
+            },
+          ],
+        },
+        {
+          component: './404',
+        },
+      ],
+    },
 
     {
       component: './404',

@@ -34,7 +34,7 @@ class ColumnVisible extends Component<ColumnVisibleProps, ColumnVisibleState> {
     this.setState = () => {};
   }
 
-  menuOverlay = (): React.ReactNode => {
+  menuOverlay = (): any => {
     const { columns } = this.props;
     return (
       <Menu>

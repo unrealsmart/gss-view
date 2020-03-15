@@ -54,23 +54,24 @@ ol {
 }
 
 :global {
-  // section ant layout
+  // 修复输入框尾部 Icon 位置
+  .ant-input-suffix {
+    display: inline-flex;
+    align-items: center;
+  }
+  // 修复左侧菜单切换动画
   section.ant-layout {
     overflow: hidden;
     transition: all 0.2s;
   }
-
-  // set user select none
-  header.ant-layout-header,
-  aside.ant-pro-sider-menu-sider {
+  // 禁止导航栏选择文本
+  header.ant-layout-header, aside.ant-pro-sider-menu-sider {
     user-select: none;
   }
-
-  // sider
-  aside.ant-pro-sider-menu-sider.light {
+  // 优化左侧菜单样式
+  aside.ant-pro-sider-menu-sider {
     border-right: 1px solid #eee;
     box-shadow: 2px 0 30px 0 rgba(29, 35, 41, 0.05);
-
     .ant-pro-sider-menu-logo {
       height: 64px;
       padding: 0;
@@ -93,10 +94,16 @@ ol {
         }
       }
     }
-
-    .ant-menu-light {
+    .fix-sider-bar .ant-menu-root {
+      height: calc(100vh - 64px);
+      overflow-x: hidden !important;
+      &::-webkit-scrollbar {
+        width: 0;
+        height: 0;
+      }
+    }
+    .ant-menu.ant-menu-root {
       border-right: none;
-
       .ant-menu-item {
         width: 100%;
         &::after {
@@ -105,24 +112,12 @@ ol {
       }
     }
   }
-
-  .ant-pro-sider-menu-sider.fix-sider-bar .ant-menu-root {
-    height: calc(100vh - 64px);
-    overflow-x: hidden !important;
-    &::-webkit-scrollbar {
-      width: 0;
-      height: 0;
-    }
-  }
-
-  // header
+  // 优化右侧顶部样式
   header.ant-layout-header {
     border-bottom: 1px solid #eee;
-
     .ant-pro-global-header {
       border-bottom: 1px solid #eee;
       box-shadow: none;
-
       .ant-pro-global-header-trigger {
         display: inline-flex;
         align-items: center;
@@ -132,38 +127,35 @@ ol {
           font-size: 15px;
         }
       }
-
       .antd-pro-components-header-search-index-headerSearch .anticon-search {
         font-size: 12px;
       }
     }
   }
-
-  // fix menu light submenu popup background
-  .ant-menu-light.ant-menu-submenu-popup {
+  // 修复左侧菜单浮动层多余的背景
+  .ant-menu.ant-menu-submenu-popup {
     background: transparent;
   }
-
-  .ant-popover-inner-content {
-    min-width: 134px;
-  }
-
-  // fix html tag a attr disabled
-  a.disabled {
-    color: rgba(0, 0, 0, 0.25);
-    cursor: not-allowed;
-  }
-
-  // no page header heading
-  .no-heading {
-    .ant-page-header.has-breadcrumb {
-      padding-top: 16px;
-    }
-    .ant-page-header-heading {
-      display: none;
-    }
-  }
-
+  //
+  //.ant-popover-inner-content {
+  //  min-width: 134px;
+  //}
+  //
+  //// fix html tag a attr disabled
+  //a.disabled {
+  //  color: rgba(0, 0, 0, 0.25);
+  //  cursor: not-allowed;
+  //}
+  //
+  //// no page header heading
+  //.no-heading {
+  //  .ant-page-header.has-breadcrumb {
+  //    padding-top: 16px;
+  //  }
+  //  .ant-page-header-heading {
+  //    display: none;
+  //  }
+  //}
   // custom google scrollbar style
   ::-webkit-scrollbar {
     width: 7px;
@@ -178,7 +170,6 @@ ol {
   ::-webkit-scrollbar-thumb:hover {
     background: #aaa;
   }
-
   // custom selection style
   ::selection {
     color: #fff;

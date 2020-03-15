@@ -1,5 +1,6 @@
 import React from 'react';
-import { Spin, Icon } from 'antd';
+import { Spin } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons/lib';
 
 interface PageLoadingProps {
   full?: boolean;
@@ -17,7 +18,7 @@ const PageLoading: React.FC<PageLoadingProps> = props => {
 
   return (
     <div style={pageStyle}>
-      <Spin indicator={<Icon type="loading" spin />} />
+      <Spin indicator={<LoadingOutlined spin />} />
     </div>
   );
 };

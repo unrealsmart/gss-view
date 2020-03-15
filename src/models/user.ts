@@ -68,7 +68,7 @@ const UserModel: UserModelType = {
         payload: {
           ...adpUser,
           name: adpUser.nickname || '未设置昵称',
-          avatar: typeof adpUser.avatar !== 'number' && adpUser.avatar.path,
+          avatar: typeof adpUser.avatar !== 'number' && (adpUser.avatar && adpUser.avatar.path),
         },
       });
     },

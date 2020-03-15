@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import { ConnectState } from '@/models/connect';
-import { Manage, Action, FieldVisible, Fulltext } from '@/components/Container';
-import { Divider, Popconfirm, Switch } from 'antd';
+import DataManager from '@/components/DataManager';
+import { Manage, Action, Template } from '@/components/Container';
+import { Divider, Popconfirm, Switch, Input } from 'antd';
 import { ra } from '@/utils/utils';
 import columns from '@/utils/columns';
+import BizForm from './form';
 
 interface DomainIndexProps {
   tableProps: object;
@@ -52,7 +54,7 @@ class Domain extends Component<DomainIndexProps, DomainState> {
             disabled={record.name === 'main'}
             loading={record.loading}
             onClick={(checked: boolean) => {
-              ra(this, 'domain/update', { id: record.id, status: checked ? 1 : 0 }).then();
+              ra(this, 'domain/update', { id: record.id, status: checked ? 1 : 0 });
             }}
           />
         ),
@@ -93,11 +95,28 @@ class Domain extends Component<DomainIndexProps, DomainState> {
     ];
 
     return (
-      <Manage loading={dataLoading} data={domain} columns={tableColumns}>
-        <FieldVisible />
-        <Fulltext />
-        <Action.Create />
-      </Manage>
+      <div>
+        <Manage>
+          <Template />
+        </Manage>
+        {/*
+        <DataManager
+          wrappedComponentRef={(dmRef: React.RefObject<unknown>) => {
+            this.dmRef = dmRef;
+          }}
+          instance={this}
+          table={{ columns: tableColumns, dataSource: domain.list }}
+          loading={dataLoading}
+          actions={{
+            create: { type: 'domain/create', fc: BizForm },
+            update: { type: 'domain/update', fc: BizForm },
+            search: { type: 'domain/search' },
+            remove: { type: 'domain/remove' },
+          }}
+          {...this.props}
+        />
+        */}
+      </div>
     );
   }
 }

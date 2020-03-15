@@ -1,18 +1,21 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Alert, Button, Card, Form, Input, Row, Col, Icon, Tooltip } from 'antd';
+import { Alert, Button, Card, Form, Input, Row, Col } from 'antd';
+import { SmileOutlined, QqOutlined, GithubOutlined, WeiboOutlined } from '@ant-design/icons/lib';
 import { ConnectState } from '@/models/connect';
-import { FormComponentProps } from 'antd/lib/form';
+import { FormProps } from 'antd/lib/form';
 import { StateType } from '@/models/login';
 import { fullScreenLoading } from '@/utils/utils';
 import logo from '@/assets/logo.jpg';
 import styles from './index.less';
 
-interface LoginFormComponentProps extends FormComponentProps {
+interface LoginFormComponentProps extends FormProps {
   [key: string]: any;
 }
 
 class Login extends Component<LoginFormComponentProps> {
+  protected formRef: any = React.createRef();
+
   state = {
     submitLoading: false,
     visible: false,
@@ -22,90 +25,70 @@ class Login extends Component<LoginFormComponentProps> {
     fullScreenLoading('leave');
   }
 
-  submit = (e: any) => {
-    e.preventDefault();
-
+  finish = (values: any) => {
     this.setState({
       submitLoading: true,
     });
-
-    const { form, dispatch } = this.props;
-    form.validateFields((errors, values) => {
-      if (!errors) {
-        dispatch({
-          type: 'login/login',
-          payload: values,
-        }).then(() => {
-          const { status }: StateType = this.props.login;
-          if (!status) {
-            this.setState({
-              submitLoading: false,
-            });
-          }
-        });
-      } else {
+    const { dispatch, login } = this.props;
+    dispatch({
+      type: 'login/login',
+      payload: values,
+    }).then(() => {
+      const { status }: StateType = login;
+      if (!status) {
         this.setState({
           submitLoading: false,
         });
       }
+    }).catch(() => {
+      this.setState({
+        submitLoading: false,
+      });
     });
   };
 
   render() {
     const { submitLoading, visible } = this.state;
-    const { getFieldDecorator, getFieldError } = this.props.form;
 
     return (
       <div className={styles.local}>
-        <Card bordered={false} style={{ width: 390, padding: 24, margin: '0 auto 64px' }}>
+        <Card bordered={false} style={{ width: 390, padding: '0 24px 24px', margin: '0 auto 64px' }}>
           <div className="title">
             <img src={logo} alt="Logo" style={{ height: 75 }} />
           </div>
           {visible && <Alert message="登录失败" type="error" showIcon />}
           {/* local login */}
-          <Form colon={false} hideRequiredMark onSubmit={this.submit}>
-            <Form.Item label="username" hasFeedback help={false}>
-              <Tooltip
-                visible={!!getFieldError('username')}
-                placement="topRight"
-                title={getFieldError('username')}
-              >
-                {getFieldDecorator('username', {
-                  rules: [{ required: true }],
-                })(
-                  <Input
-                    allowClear
-                    disabled={submitLoading}
-                    placeholder="please input username."
-                  />,
-                )}
-              </Tooltip>
+          <Form
+            name="login"
+            colon={false}
+            ref={this.formRef}
+            hideRequiredMark
+            onFinish={this.finish}
+            layout="vertical"
+          >
+            <Form.Item
+              label="username"
+              name="username"
+              hasFeedback
+              required
+              help={false}
+              rules={[{ required: true }]}
+            >
+              <Input
+                allowClear
+                disabled={submitLoading}
+                placeholder="please input username."
+              />
             </Form.Item>
-            <Form.Item label="password" hasFeedback help={false}>
-              <Tooltip
-                visible={!!getFieldError('password')}
-                placement="topRight"
-                title={getFieldError('password')}
-              >
-                {getFieldDecorator('password', {
-                  rules: [{ required: true }],
-                })(
-                  <Input.Password
-                    allowClear
-                    disabled={submitLoading}
-                    placeholder="please input password."
-                  />,
-                )}
-              </Tooltip>
+            <Form.Item label="password" name="password" hasFeedback required help={false}>
+              <Input.Password
+                allowClear
+                disabled={submitLoading}
+                placeholder="please input password."
+              />
             </Form.Item>
-            <div>
-              {getFieldDecorator('entrance', {
-                initialValue: 'main',
-                rules: [{ required: true }],
-              })(<Input type="hidden" />)}
-            </div>
             <Form.Item>
-              <Row type="flex" justify="space-between" align="middle">
+              <Row justify="space-between" align="middle">
                 <Col>
                   <Button
                     type="primary"
@@ -127,18 +110,20 @@ class Login extends Component<LoginFormComponentProps> {
           <div className={styles.third}>
             <div style={{ marginBottom: 12 }}>or, use third party login (dev)</div>
             <div>
-              <Button icon="qq" disabled />
-              <Button icon="github" disabled />
-              <Button icon="weibo" disabled />
+              <Button icon={<QqOutlined />} disabled />
+              <Button icon={<GithubOutlined />} disabled />
+              <Button icon={<WeiboOutlined />} disabled />
+              {/*
               <Button icon="wechat" disabled />
               <Button icon="alipay" disabled />
               <Button icon="taobao" disabled />
               <Button icon="google" disabled />
+              */}
             </div>
           </div>
           {/* dev pro */}
           <div className={styles.pro}>
-            <Icon type="smile" style={{ marginRight: 4 }} />
+            <SmileOutlined style={{ marginRight: 4 }} />
             <span style={{ marginRight: 8 }}>thank you for your use.</span>
             <a href="http://www.baidu.com/" rel="noopener noreferrer" target="_blank">
               click here to view.
@@ -152,4 +137,4 @@ class Login extends Component<LoginFormComponentProps> {
 
 export default connect(({ login }: ConnectState) => ({
   login,
-}))(Form.create()(Login));
+}))(Login);
