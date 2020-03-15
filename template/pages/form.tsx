@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import { ConnectState } from '@/models/connect';
-import { FormComponentProps } from 'antd/es/form';
-import { Form } from 'antd';
+import { FormProps } from 'antd/es/form';
 
 type LoadValue = {
   id: number | string;
@@ -13,7 +12,7 @@ type LoadData = {
   [key: string]: any;
 };
 
-interface FormProps extends FormComponentProps {
+interface FormTemplateProps extends FormProps {
   value?: LoadValue;
 }
 
@@ -23,7 +22,7 @@ interface FormState extends GlobalFormState {
   };
 }
 
-class BizForm extends Component<FormProps, FormState> {
+class BizForm extends Component<FormTemplateProps, FormState> {
   state = {
     data: {},
   };
@@ -49,4 +48,4 @@ class BizForm extends Component<FormProps, FormState> {
 
 export default connect(({ domain }: ConnectState) => ({
   domain,
-}))(Form.create()(BizForm));
+}))(BizForm);
