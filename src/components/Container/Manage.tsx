@@ -4,17 +4,18 @@ import { Row, Col, Table } from 'antd';
 import { ColumnProps } from 'antd/lib/table';
 import withRouter from 'umi/withRouter';
 import RouterTypes from 'umi/routerTypes';
-import isJSON from "is-json";
+import isJSON from 'is-json';
 
 interface ManageProps extends CardProps, RouterTypes {
   loading?: boolean;
   data: GlobalModelState;
-  columns: ColumnProps<any>[];
+  // columns: ColumnProps<any>[];
 }
 
 type SubComponents = {
   FieldVisible?: ReactElement;
   Fulltext?: ReactElement;
+  Columns?: ReactElement;
   Create?: ReactElement;
   Demo?: ReactElement;
 }
@@ -26,12 +27,24 @@ interface ManageState {
 class Manage extends Component<ManageProps, ManageState> {
 
   state = {
-    //
     columns: [],
   };
 
   componentDidMount(): void {
-    this.setState({ columns: this.loadColumnVisibleKeys() });
+    this.parseSubComponents();
+    // 通过解析子组件获取字段信息
+    // const { Columns } = this.parseSubComponents();
+    // const columns = Columns && Columns.props.children.map((item: any) => {
+    //   if (item.children) {
+    //     return {
+    //       ...item.props,
+    //       render: item.children,
+    //     }
+    //   }
+    //   return item.props;
+    // });
+    // console.log(Columns && Columns.props.children);
+    // this.setState({ columns: this.loadColumnVisibleKeys(columns) });
   }
 
   // 解析子组件
@@ -52,8 +65,8 @@ class Manage extends Component<ManageProps, ManageState> {
   };
 
   // 载入可见字段
-  loadColumnVisibleKeys = (): object[] => {
-    const { location, columns } = this.props;
+  loadColumnVisibleKeys = (columns: any[]): object[] => {
+    const { location } = this.props;
     const cacheName: string = `dmcc${location.pathname.replace(/\//g, '-')}`;
     const cacheValue: any = localStorage.getItem(cacheName);
     if (cacheValue && isJSON.strict(cacheValue)) {
@@ -70,15 +83,28 @@ class Manage extends Component<ManageProps, ManageState> {
 
   // 净化字段
   purifyColumns = (): object[] => {
-    const { columns } = this.state;
-    const newColumns: object[] = [];
+    const { columns = [] } = this.state;
+    const newColumns: any[] = [];
     columns.forEach((item: any) => {
-      const { show = true } = item;
-      if (show) {
+      if (item.children) {
+        const { children, ...other } = item;
+        newColumns.push({ ...other });
+      } else {
         newColumns.push(item);
       }
     });
     return newColumns;
+    // return columns.filter((item: any) => item.show || item.title !== '标题');
+  };
+
+  //
+  showColumns = () => {
+    const { Columns }: SubComponents = this.parseSubComponents();
+    return Columns && React.cloneElement(Columns, {
+      setColumns: (values: any) => {
+        this.setState({ columns: values });
+      },
+    });
   };
 
   // 显示字段子组件
@@ -111,6 +137,7 @@ class Manage extends Component<ManageProps, ManageState> {
 
     return (
       <Card bordered={false}>
+        {this.showColumns()}
         <Row style={{ marginBottom: this.isExistHeader() ? 12 : 0 }}>
           <Col md={24} lg={12}>
             <Row gutter={6}>

@@ -20,7 +20,7 @@ class Termination extends React.Component<TerminationProps, TerminationState> {
     response.text().then(data => {
       const nd = isJSON(data) ? JSON.parse(data) : data;
       this.setState({
-        message: typeof data === 'string' ? data : nd.message,
+        message: data || nd.message,
       });
     });
   }
@@ -29,6 +29,12 @@ class Termination extends React.Component<TerminationProps, TerminationState> {
     const { response } = this.props;
     const { status, statusText, url } = response;
     const { message } = this.state;
+    const ellipsisStyle = {
+      whiteSpace: 'nowrap' as const,
+      maxWidth: 220,
+      textOverflow: 'ellipsis',
+      overflow: 'hidden'
+    };
 
     return (
       <div className={styles.container}>
@@ -38,7 +44,7 @@ class Termination extends React.Component<TerminationProps, TerminationState> {
             <p>错误代码：{status}</p>
             <p>错误描述：{statusText}</p>
             <p>请求地址：{url}</p>
-            <p>响应消息：{message}</p>
+            <p style={ellipsisStyle}>响应消息：{message}</p>
           </div>
           <div className={styles.refresh}>
             <a href={window.location.href}>刷新</a>

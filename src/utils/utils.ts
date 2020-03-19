@@ -95,7 +95,7 @@ export const rss = {
 };
 
 // 请求代理
-export function ra(that: ComponentProps<any>, type: string, payload: object = {}): Promise<any> {
+export function ra(that: ComponentProps<any>, type: string, payload: object = {}): Promise<any> | void {
   // 判断调用函数是否正常
   if (!that.props || !that.props.dispatch) throw new Error('response error');
   // 设置数据加载状态（仅在搜索时自动设置）

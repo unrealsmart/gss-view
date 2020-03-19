@@ -3,15 +3,26 @@ import { Input } from 'antd';
 
 interface FulltextProps {
   disabled?: boolean;
+  modalType: string;
+  fieldName?: string;
+  search?: Function;
 }
 
 class Fulltext extends Component<FulltextProps> {
+  static defaultProps = {
+    disabled: false,
+    fieldName: 'fs',
+  };
+
   state = {
     //
   };
 
-  onFinish = () => {
-    //
+  search = (value: string) => {
+    const { search } = this.props;
+    if (search && typeof search === 'function') {
+      search(value);
+    }
   };
 
   render(): React.ReactNode {
@@ -24,6 +35,7 @@ class Fulltext extends Component<FulltextProps> {
         addonBefore={<span>全文搜索</span>}
         disabled={disabled}
         placeholder="请输入搜索内容"
+        onSearch={this.search}
       />
     );
   }

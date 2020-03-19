@@ -40,6 +40,7 @@ class FieldVisible extends Component<Props, State> {
         columnVisibleKeys.push(item.dataIndex);
       }
     });
+    console.log(columnVisibleKeys);
     const cacheName = `dmcc${location.pathname.replace(/\//g, '-')}`;
     localStorage.setItem(cacheName, JSON.stringify(columnVisibleKeys));
   };

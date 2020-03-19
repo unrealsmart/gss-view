@@ -183,6 +183,7 @@ export default {
     // ...darkTheme,
     'primary-color': defaultSettings.primaryColor,
     'font-size-base': '12px',
+    'input-padding-vertical-base': '6px',
   },
   define: {
     REACT_APP_ENV: REACT_APP_ENV || false,

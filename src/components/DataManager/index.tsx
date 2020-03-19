@@ -231,10 +231,13 @@ class DataManager extends Component<DataManagerProps, DataManagerState> {
         mix(values);
       }
       if (typeof mix === 'object') {
-        ra(instance, mix && mix.type, values).then(() => {
-          this.setModal(modalProps.title, false, false);
-          this.resetForm();
-        });
+        const response = ra(instance, mix && mix.type, values);
+        if (response) {
+          response.then(() => {
+            this.setModal(modalProps.title, false, false);
+            this.resetForm();
+          });
+        }
       }
     });
   };

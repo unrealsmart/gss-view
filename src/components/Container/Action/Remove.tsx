@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
 
-class Update extends Component {
+class Remove extends Component {
   state = {
     //
   };
 
   render(): React.ReactNode {
     return (
-      <span>
-        Update
-      </span>
+      <div>
+        Action Remove
+      </div>
     );
   }
 }
 
-export default Update;
+export default Remove;

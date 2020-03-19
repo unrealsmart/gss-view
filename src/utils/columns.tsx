@@ -58,7 +58,7 @@ const columns: Columns = {
   datetime: params => ({
     title: '日期',
     dataIndex: 'datetime',
-    width: 140,
+    width: 166,
     render: (_: string, record: Timestamps) => (
       <>
         <div style={{ color: '#CCC' }}>{record.create_time || 'NULL'}</div>
