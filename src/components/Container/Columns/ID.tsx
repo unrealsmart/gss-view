@@ -1,23 +1,25 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import contrast from '@/components/Container/Columns/contrast';
 
 interface IDProps {
   [key: string]: any;
 }
 
-const ID: React.FC<IDProps> = (props) => {
-  useEffect(() => {
-    const values = {
-      abc: 1,
-      def: 3,
-      cn: 2,
-    };
-
-    const keys = Object.keys(values);
-    const isChange = keys.filter(key => props[key] !== values[key]).length;
-    if (isChange && props.change) {
-      props.change('ID', values);
-    }
+const ID: React.FC<IDProps> = props => {
+  const [columns, setColumns]: any = useState({
+    // abc: 1,
+    // def: 3,
+    // cn: 1,
+    // width: 99,
   });
+
+  useEffect(() => {
+    const difference = contrast(ID, columns, props);
+    if (JSON.stringify(difference) !== '{}') {
+      setColumns({ ...columns, ...difference });
+      props.change('ID', difference);
+    }
+  }, [props]);
 
   return null;
 };
@@ -25,7 +27,7 @@ const ID: React.FC<IDProps> = (props) => {
 ID.defaultProps = {
   title: 'ID',
   dataIndex: 'id',
-  width: 65,
+  width: 75,
   abc: 1,
 };
 

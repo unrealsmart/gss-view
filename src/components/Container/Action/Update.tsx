@@ -8,7 +8,7 @@ class Update extends Component {
   render(): React.ReactNode {
     return (
       <span>
-        Update
+        <a>更新</a>
       </span>
     );
   }

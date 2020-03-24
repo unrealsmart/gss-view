@@ -27,8 +27,7 @@ class FieldVisible extends Component<Props, State> {
     visible: false,
   };
 
-  componentDidMount(): void {
-  }
+  componentDidMount(): void {}
 
   // 存储可见字段
   saveColumnVisibleKeys = (values: object[]): void => {
@@ -40,7 +39,6 @@ class FieldVisible extends Component<Props, State> {
         columnVisibleKeys.push(item.dataIndex);
       }
     });
-    console.log(columnVisibleKeys);
     const cacheName = `dmcc${location.pathname.replace(/\//g, '-')}`;
     localStorage.setItem(cacheName, JSON.stringify(columnVisibleKeys));
   };
@@ -69,18 +67,21 @@ class FieldVisible extends Component<Props, State> {
 
     return (
       <Dropdown
-        overlay={(
+        overlay={
           <Menu onClick={this.menuItemClick}>
-            {columns && columns.map((item: any) => {
-              const { show = true } = item;
-              return item.dataIndex && (
-                <Menu.Item key={item.dataIndex}>
-                  <Checkbox checked={show}>{item.title}</Checkbox>
-                </Menu.Item>
-              );
-            })}
+            {columns &&
+              columns.map((item: any) => {
+                const { show = true } = item;
+                return (
+                  item.dataIndex && (
+                    <Menu.Item key={item.dataIndex}>
+                      <Checkbox checked={show}>{item.title}</Checkbox>
+                    </Menu.Item>
+                  )
+                );
+              })}
           </Menu>
-        )}
+        }
         visible={visible}
         onVisibleChange={this.visibleChange}
         disabled={disabled}

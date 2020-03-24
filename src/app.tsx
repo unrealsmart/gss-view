@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import request from '@/utils/request';
-import Termination from '@/components/Termination';
+import Termination from '@/components/Error';
 import { fullScreenLoading } from '@/utils/utils';
 // import isJSON from 'is-json';
 // import { getToken } from '@/utils/storage';

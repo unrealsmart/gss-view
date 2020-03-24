@@ -45,11 +45,17 @@ class Columns extends Component<ColumnsProps, ColumnsState> {
   };
 
   componentDidMount(): void {
+    const { signals } = this.state;
     const subComponents = this.parseSubComponents();
-    const { signals } =  this.state;
+    // 确保更新时顺序正确
     Object.keys(subComponents).forEach(key => {
       signals[key] = subComponents[key].props;
     });
+    // 触发父级组件更新
+    const { setColumns }: any = this.props;
+    if (setColumns) {
+      setColumns(signals);
+    }
     this.setState({
       subComponents,
       signals,
@@ -66,46 +72,39 @@ class Columns extends Component<ColumnsProps, ColumnsState> {
     return subComponents;
   };
 
-  // 显示子组件
-  showSubComponent = (children: any) => {
-    const { signals } = this.state;
-    const newProps: any = signals[children.type.name] || {};
-    return children && React.cloneElement(children, {
-      ...newProps,
-      change: this.change,
+  // 自动载入子组件更新
+  autoLoadSubComponent = () => {
+    const elements: any = [];
+    const { subComponents, signals } = this.state;
+    Object.keys(subComponents).forEach(key => {
+      const newProps: any = signals[key] || {};
+      elements.push(
+        subComponents[key] &&
+          React.cloneElement(subComponents[key], {
+            ...newProps,
+            key,
+            change: this.change,
+          }),
+      );
     });
+    return elements;
   };
 
-  //
+  // 子组件更新动态内容（是否更新是由子组件决定，此函数仅触发更新动作）
+  // 📑 重要：子组件内未进行更新检测时会导致无限循环，小心使用
   change = (name: string, values: any) => {
-    const { subComponents } = this.state;
+    const { setColumns }: any = this.props;
+    const { subComponents, signals } = this.state;
     const component = subComponents[name];
-    const keys = Object.keys(values);
-    const isChange = keys.filter(key => component && component.props[key] !== values[key]).length;
-    if (isChange) {
-      const { signals } = this.state;
-      const newSignals = {
-        ...signals,
-        [name]: { ...component.props, ...values },
-      };
-      this.setState({ signals: newSignals });
-      const { setColumns }: any = this.props;
-      if (setColumns) setColumns(Object.values(newSignals));
+    signals[name] = component ? { ...component.props, ...values } : {};
+    this.setState({ signals });
+    if (setColumns) {
+      setColumns(signals);
     }
   };
 
   render(): React.ReactNode {
-    const { ID, Name, Actions } = this.parseSubComponents();
-    // console.log(this.state);
-
-    return (
-      <div>
-        The Component Container Not Show!
-        {this.showSubComponent(ID)}
-        {this.showSubComponent(Name)}
-        {this.showSubComponent(Actions)}
-      </div>
-    );
+    return <>{this.autoLoadSubComponent()}</>;
   }
 }
 

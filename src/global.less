@@ -46,6 +46,13 @@ ol {
   }
 }
 
+@media (max-width: @screen-md) {
+  .ant-pro-basicLayout-content {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+  }
+}
+
 // 兼容IE11
 @media screen and(-ms-high-contrast: active), (-ms-high-contrast: none) {
   body .ant-design-pro > .ant-layout {
@@ -65,7 +72,8 @@ ol {
     transition: all 0.2s;
   }
   // 禁止导航栏选择文本
-  header.ant-layout-header, aside.ant-pro-sider-menu-sider {
+  header.ant-layout-header,
+  aside.ant-pro-sider-menu-sider {
     user-select: none;
   }
   // 优化左侧菜单样式

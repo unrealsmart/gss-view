@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-class Remove extends Component {
+class Retrieve extends Component {
   state = {
     //
   };
@@ -8,10 +8,10 @@ class Remove extends Component {
   render(): React.ReactNode {
     return (
       <span>
-        <a>删除</a>
+        <a>回收</a>
       </span>
     );
   }
 }
 
-export default Remove;
+export default Retrieve;

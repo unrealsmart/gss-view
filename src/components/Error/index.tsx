@@ -1,5 +1,6 @@
 import React from 'react';
 import isJSON from 'is-json';
+import config from '@/../config/config';
 import styles from './index.less';
 
 interface TerminationProps {
@@ -33,13 +34,13 @@ class Termination extends React.Component<TerminationProps, TerminationState> {
       whiteSpace: 'nowrap' as const,
       maxWidth: 220,
       textOverflow: 'ellipsis',
-      overflow: 'hidden'
+      overflow: 'hidden',
     };
 
     return (
       <div className={styles.container}>
         <div className={styles.restrict}>
-          <div className={styles.title}>ADP TERMINATION</div>
+          <div className={styles.title}>ADP ERROR</div>
           <div className={styles.description}>
             <p>错误代码：{status}</p>
             <p>错误描述：{statusText}</p>
@@ -47,7 +48,7 @@ class Termination extends React.Component<TerminationProps, TerminationState> {
             <p style={ellipsisStyle}>响应消息：{message}</p>
           </div>
           <div className={styles.refresh}>
-            <a href={window.location.href}>刷新</a>
+            <a href={config.base || '/'}>刷新</a>
           </div>
         </div>
       </div>

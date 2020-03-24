@@ -94,14 +94,15 @@ class Domain extends Component<DomainIndexProps, DomainState> {
     return (
       <Manage loading={dataLoading} data={domain}>
         <Columns>
-          <Columns.ID/>
-          <Columns.Name/>
-          <Columns.Description/>
-          <Columns.DateTime/>
-          <Columns.Status/>
+          <Columns.ID />
+          <Columns.Name />
+          <Columns.Description />
+          <Columns.DateTime />
+          <Columns.Status />
           <Columns.Actions>
-            <Action.Update/>
-            <Action.Remove/>
+            <Action.Update />
+            <Action.Retrieve />
+            <Action.Remove />
           </Columns.Actions>
         </Columns>
         <FieldVisible />

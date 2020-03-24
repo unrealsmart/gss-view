@@ -18,31 +18,32 @@ type SubComponents = {
   Columns?: ReactElement;
   Create?: ReactElement;
   Demo?: ReactElement;
-}
+};
 
 interface ManageState {
   columns: ColumnProps<any>[];
+  // childrenProps: any;
 }
 
 class Manage extends Component<ManageProps, ManageState> {
-
   state = {
     columns: [],
+    // childrenProps: {},
   };
 
   componentDidMount(): void {
     this.parseSubComponents();
     // 通过解析子组件获取字段信息
     // const { Columns } = this.parseSubComponents();
+    // console.log(Columns);
+    //
+    // React.Children.forEach(Columns && Columns.props.children, (child: any) => {
+    //   console.log(child);
+    // });
     // const columns = Columns && Columns.props.children.map((item: any) => {
-    //   if (item.children) {
-    //     return {
-    //       ...item.props,
-    //       render: item.children,
-    //     }
-    //   }
     //   return item.props;
     // });
+    // console.log(columns);
     // console.log(Columns && Columns.props.children);
     // this.setState({ columns: this.loadColumnVisibleKeys(columns) });
   }
@@ -65,71 +66,86 @@ class Manage extends Component<ManageProps, ManageState> {
   };
 
   // 载入可见字段
-  loadColumnVisibleKeys = (columns: any[]): object[] => {
+  loadColumnVisibleKeys = (columns: any[]): any[] => {
     const { location } = this.props;
     const cacheName: string = `dmcc${location.pathname.replace(/\//g, '-')}`;
     const cacheValue: any = localStorage.getItem(cacheName);
+    const newColumns = Object.values(columns);
     if (cacheValue && isJSON.strict(cacheValue)) {
       const cacheArray = JSON.parse(cacheValue);
-      return columns.map((item: any) => {
+      return newColumns.map((item: any) => {
         if (!cacheArray.includes(item.dataIndex) && item.dataIndex !== undefined) {
           return { ...item, show: false };
         }
         return { ...item, show: true };
       });
     }
-    return columns;
+    return newColumns;
   };
 
-  // 净化字段
+  // 净化字段（将）0
   purifyColumns = (): object[] => {
     const { columns = [] } = this.state;
+    const columnVisibleKeys = this.loadColumnVisibleKeys(columns);
     const newColumns: any[] = [];
-    columns.forEach((item: any) => {
-      if (item.children) {
-        const { children, ...other } = item;
-        newColumns.push({ ...other });
-      } else {
-        newColumns.push(item);
+    columnVisibleKeys.forEach((item: any) => {
+      const { show = true } = item;
+      if (show) {
+        if (item.children) {
+          const { children, ...more } = item;
+          newColumns.push({ ...more });
+        } else {
+          newColumns.push(item);
+        }
       }
     });
     return newColumns;
-    // return columns.filter((item: any) => item.show || item.title !== '标题');
   };
 
-  //
+  // 计算字段
   showColumns = () => {
+    const { location } = this.props;
     const { Columns }: SubComponents = this.parseSubComponents();
-    return Columns && React.cloneElement(Columns, {
-      setColumns: (values: any) => {
-        this.setState({ columns: values });
-      },
-    });
+    return (
+      Columns &&
+      React.cloneElement(Columns, {
+        location,
+        setColumns: (values: any) => {
+          this.setState({ columns: values });
+        },
+      })
+    );
   };
 
-  // 显示字段子组件
+  // 显示字段（子组件）
   showFieldVisible = () => {
     const { loading } = this.props;
     const { columns } = this.state;
     const { FieldVisible }: SubComponents = this.parseSubComponents();
-    return FieldVisible && React.cloneElement(FieldVisible, {
-      columns,
-      history: this.props.history,
-      location: this.props.location,
-      disabled: loading,
-      onChange: (values: any[]) => {
-        this.setState({ columns: values });
-      },
-    })
+    return (
+      FieldVisible &&
+      React.cloneElement(FieldVisible, {
+        columns: this.loadColumnVisibleKeys(columns),
+        history: this.props.history,
+        location: this.props.location,
+        disabled: loading,
+        onChange: (values: any[]) => {
+          this.setState({ columns: values });
+        },
+      })
+    );
   };
 
   // 显示全文搜索子组件
   showFulltext = () => {
     const { loading } = this.props;
     const { Fulltext }: SubComponents = this.parseSubComponents();
-    return Fulltext && React.cloneElement(Fulltext, {
-      disabled: loading,
-    });
+    return (
+      Fulltext &&
+      React.cloneElement(Fulltext, {
+        disabled: loading,
+      })
+    );
   };
 
   render(): React.ReactNode {
@@ -137,16 +153,12 @@ class Manage extends Component<ManageProps, ManageState> {
 
     return (
       <Card bordered={false}>
-        {this.showColumns()}
+        <>{this.showColumns()}</>
         <Row style={{ marginBottom: this.isExistHeader() ? 12 : 0 }}>
           <Col md={24} lg={12}>
             <Row gutter={6}>
-              <Col>
-                {this.showFieldVisible()}
-              </Col>
-              <Col>
-                {this.showFulltext()}
-              </Col>
+              <Col flex="32px">{this.showFieldVisible()}</Col>
+              <Col>{this.showFulltext()}</Col>
             </Row>
           </Col>
           <Col md={24} lg={12}>
